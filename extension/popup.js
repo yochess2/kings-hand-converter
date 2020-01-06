@@ -1,16 +1,20 @@
-((s,h) => {
+((APP_SETTING, HELPER_METHODS) => {
   $(() => {
+    const s = APP_SETTING('store')
+    const p = APP_SETTING('popup')
+    const h = HELPER_METHODS()
+
     // Displaying both the starting and ending hand value after user clicks on the popup icon
     displayHandNums(
-      s.store['starting_hand_num'],
-      s.store['ending_hand_num']
+      s['starting_hand_num'],
+      s['ending_hand_num']
     )
 
     // Setting both the starting and ending hand values after user clicks set
-    $(s.popup.submit_button_id).click((val) => {
+    $(p.submit_button_id).click((val) => {
       handleClick(
-        h.getElemVal(s.popup['starting_input_id']),
-        h.getElemVal(s.popup['ending_input_id'])
+        h.getElemVal(p['starting_input_id']),
+        h.getElemVal(p['ending_input_id'])
       )
     })
 
@@ -18,57 +22,38 @@
     async function displayHandNums(startName, endName) {
       const store = await h.getStorage([startName, endName])
       h.setElemText(
-        s.popup['starting_hand_num_id'],
+        p['starting_hand_num_id'],
         store[startName]
       )
       h.setElemVal(
-        s.popup['starting_input_id'],
+        p['starting_input_id'],
         store[startName]
       )
       h.setElemText(
-        s.popup['ending_hand_num_id'],
+        p['ending_hand_num_id'],
         store[endName]
       )
       h.setElemVal(
-        s.popup['ending_input_id'],
+        p['ending_input_id'],
         store[endName]
       )
     }
 
     // Handling the click by saving the values
     function handleClick(startNum, endNum) {
-      console.log(startNum)
-
-      if (!(inputConditions(startNum, endNum))) {
+      if (!(h.inputConditions(startNum, endNum))) {
         return
       }
       saveHandNums(
         startNum,
-        s.popup['starting_hand_num_id'],
-        s.store['starting_hand_num']
+        p['starting_hand_num_id'],
+        s['starting_hand_num']
       )
       saveHandNums(
         endNum,
-        s.popup['ending_hand_num_id'],
-        s.store['ending_hand_num']
+        p['ending_hand_num_id'],
+        s['ending_hand_num']
       )
-    }
-
-    // Input conditions
-    function inputConditions(startNum, endNum) {
-      if (isNaN(startNum) || isNaN(endNum)) {
-        alert('Entries must be numbers')
-        return false
-      }
-      if (!(h.isPositiveNum(startNum)) || !(h.isPositiveNum(endNum))) {
-        alert('Entries must be positive numbers')
-        return false
-      }
-      if (h.isGreaterThan(endNum, startNum)) {
-        alert('Starting Number must be equal to or greater than Ending Number')
-        return false
-      }
-      return true
     }
 
     // Sets storage values and display values
@@ -77,4 +62,4 @@
       h.setStorageVal(storeName, num)
     }
   })
-})(APP_SETTING('popup'), HELPER_METHODS())
+})(APP_SETTING, HELPER_METHODS)
