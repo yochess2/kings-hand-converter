@@ -20,7 +20,7 @@ function APP_SETTING(type) {
     let obj = {
       timeToDelay: 2000,
       clickEvent: document.createEvent('MouseEvents'),
-      doubleClickEvent: document.createEvent('MouseEvents')
+      doubleClickEvent: document.createEvent('MouseEvents'),
     }
     obj.clickEvent.initEvent('mousedown', true, true)
     obj.doubleClickEvent.initEvent('dblclick', true, true)

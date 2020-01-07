@@ -1,48 +1,58 @@
-((APP_SETTING,HELPER_METHODS) => {
+((APP_SETTING, APP_METHODS, HELPER_METHODS) => {
   const h = HELPER_METHODS()
+  const d = APP_SETTING('display')
+  const s = APP_SETTING('store')
+  const p = APP_METHODS.parser
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.text === 'rightClicked') {
-      const s = APP_SETTING('store')
       handleClick(s.starting_hand_num, s.ending_hand_num)
       sendResponse('performing operation')
     }
   })
 
+  // FUNCTION 1
   async function handleClick(startNum, endNum) {
-    const store = await h.getStorage([startNum, endNum])
-    if (!(h.inputConditions(store[startNum], store[endNum]))) {
-      return
+    const app = await initApp(startNum, endNum)
+    if (app.error.val) {
+      return alert(app.error.text)
     }
-    processArchive(parseInt(store[startNum]), parseInt(store[endNum]))
+    const hasResults = await processArchive(
+      app.archiveHandElems,
+      app.displays,
+      parseInt(app.store[startNum]),
+      parseInt(app.store[endNum])
+    )
+    closeAppDocuments(app.displays, hasResults)
   }
 
-  // Give Summary
-  async function processArchive(startNum, endNum) {
-    const archiveHandElems = getUnreadyElem(['.style_hh_workspace', '.lc_list'])[0].children //need error handling
-    if (!(archiveHandElems)) {
-      alert('There are no hands!')
-      return
+  // FUNCTION 1.1
+  async function initApp(startNum, endNum) {
+    const app = {
+      error: {
+        val: false
+      },
+      store: await h.getStorage([startNum, endNum]),
+      archiveHandElems: h.getUnreadyElem(['.style_hh_workspace', '.lc_list'])[0].children,
+      displays: {
+        handHistory: h.makeDisplay(d.handHistory.url, '', d.handHistory.specs),
+        unconverted: h.makeDisplay(d.unconverted.url, '', d.unconverted.specs)
+      }
     }
-    const a = APP_SETTING('archive')
+    if (!(h.inputConditions(app.store[startNum], app.store[endNum]))) {
+      h.setError(app.error, true, "Something wrong with popup.js")
+      return app
+    }
+    if (!(app.archiveHandElems)) {
+      h.setError(app.error, true, "Something wrong with the hands")
+      return app
+    }
+    return app
+  }
 
-    //Open new window
-    const newWindow = window.open(
-      'hand_history.html',
-      '',
-      'width=400,height=400,resizeable,scrollbars'
-    )
-    newWindow.onbeforeunload = function (e) {
-      e = e || window.event
-        return 'Sure?'
-    }
-    window.onbeforeunload = function (e) {
-      e = e || window.event
-        return 'Sure?'
-    }
-
-    // TODO: Study promises with higher order function loops
+  // FUNCTION 1.2
+  async function processArchive(archiveHandElems, displays, startNum, endNum) {
+    let counter = 0, hasResults = false
     let currentNum, beforeNum
-    let counter = 0
     for (const archiveHandElem of archiveHandElems) {
       if (!(validHand(archiveHandElem))) {
         continue
@@ -55,65 +65,32 @@
         break
       }
       beforeNum = currentNum
-      const hand = await fetchUnconvertedHand(archiveHandElem, a)
+      const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem)
+      const convertedHand = convertHand(unconvertedHand)
+      printHand(unconvertedHand, convertedHand, displays, counter)
+      isProcessed = true
       counter++
-      //HERE IS WHERE I LEFT OFF
-      if (counter === 1) {
-        newWindow.document.title = 'unconverted hands'
-      }
-      newWindow.document.write('<pre>')
-      newWindow.document.write(hand.text)
-      newWindow.document.write('\n')
     }
+    return hasResults
   }
 
-  // Give Summary and Modularize
-  async function fetchUnconvertedHand(elem, a) {
-    const result = {
-      text: '',
-      error: true
+  // FUNCTION 1.3: Close Displays when done
+  function closeAppDocuments(displays, hasResults) {
+    if (hasResults) {
+      displays.handHistory.document.write('<pre/>')
+      displays.unconverted.document.write('<pre/>')
     }
-    elem.dispatchEvent(a.clickEvent)
-    elem.dispatchEvent(a.doubleClickEvent)
-    let ms = 0
-    while ($('body')[0].lastElementChild.className !== "fullscreen_mask") { //need error handling
-      await h.delay(10)
-      if (ms > 5000) {
-        break
-      }
-      ms++
-    }
-    if (ms > 5000) {
-      return result
-    }
-    result.error = false
-    const hhElem = getUnreadyElem(['.style_modal_dialog', '.style_hh_list'])
-    // hhElem[0].children won't work!?
-    const buttonElems = getUnreadyElem(['.style_modal_dialog .style_button_bar'])
-    const button = buttonElems[0].lastElementChild //need error handling
-    result.text += hhElem[0].innerText //need error handling
-    button.click()
-    return result
+    displays.handHistory.document.close()
+    displays.unconverted.document.close()
   }
 
-  // Gets element via jQuery
-  // Returns in some weird array format
-  function getUnreadyElem(arr) {
-    const elem = $(arr.join(' '))
-    if (!(elem) || !(elem)[0]) {
-      return []
-    }
-    return elem
-  }
+    ////// Helper //////
+   /* processArchive */
+  ///// METHODS //////
 
   // Gets the hand number of the archive hand
   function getCurrentArchiveHandNum(elem) {
     return parseInt(elem.children[1].innerText)
-  }
-
-  function clickHand(elem, a) {
-    elem.dispatchEvent(a.clickEvent)
-    elem.dispatchEvent(a.doubleClickEvent)
   }
 
   // Checks if hand elem is not broken
@@ -132,4 +109,25 @@
   function isLastHand(endNum, currentNum) {
     return endNum > currentNum
   }
-})(APP_SETTING, HELPER_METHODS)
+
+  function printHand(uncovertedHand, convertedHand, displays, counter) {
+    if (counter === 0) {
+      displays.unconverted.document.body.innerHTML = ''
+      displays.unconverted.document.title = d.unconverted.title
+      displays.unconverted.document.write('<pre>')
+      displays.handHistory.document.body.innerHTML = ''
+      displays.handHistory.document.title = d.unconverted.title
+      displays.handHistory.document.write('<pre>')
+      h.hookAlert()
+      h.hookAlert(displays.unconverted)
+      h.hookAlert(displays.handHistory)
+    }
+    if (convertedHand.display === true) {
+      displays.handHistory.document.write(convertedHand.text)
+      displays.handHistory.document.write('\n')
+    } else {
+      displays.unconverted.document.write(uncovertedHand.text)
+      displays.unconverted.document.write('\n')
+    }
+  }
+})(APP_SETTING, APP_METHODS, HELPER_METHODS)

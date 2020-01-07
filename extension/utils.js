@@ -1,3 +1,4 @@
+const APP_METHODS = {}
 function HELPER_METHODS() {
   const createObject = (key, val) => { const obj = {}; obj[key] = val; return obj }
   const delay = ms => new Promise(res => setTimeout(res, ms))
@@ -7,6 +8,7 @@ function HELPER_METHODS() {
   const setElemText = (name, val) => $(name).text(val)
   const getElemVal = name => $(name).val()
   const setElemVal = (name, text) => $(name).val(text)
+  const setError = (err, val, text) => { err.val = val; err.text = text }
 
   return {
     // general
@@ -25,6 +27,14 @@ function HELPER_METHODS() {
     setElemText: setElemText,
     getElemVal: getElemVal,
     setElemVal: setElemVal,
+    getUnreadyElem: getUnreadyElem,
+
+    // for new displays
+    makeDisplay: makeDisplay,
+    hookAlert: hookAlert,
+
+    // error handling
+    setError: setError,
 
     // for this app
     inputConditions: inputConditions,
@@ -52,5 +62,28 @@ function HELPER_METHODS() {
       return false
     }
     return true
+  }
+
+  function getUnreadyElem(arr) {
+    const elem = $(arr.join(' '))
+    if (!(elem) || !(elem)[0]) {
+      return [[]]
+    }
+    return elem
+  }
+
+  // Need a better function, got this off the internet
+  function hookAlert(display) {
+    display = display || window
+    display.onbeforeunload = function (e) {
+      e = e || window.event
+        return 'Sure?'
+    }
+  }
+
+  function makeDisplay(url, title, specs) {
+    const display = window.open(url, title, specs)
+    display.document.write('...')
+    return display
   }
 }
