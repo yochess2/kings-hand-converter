@@ -26,6 +26,7 @@ This chrome extension app is written in pure javascript and jQuery
 4. Click "Load unpacked" (upper left corner)
 5. Look for the kings folder, highlight extension, and click select
 6. Turn on the app, and you're good to go
+
 ![download demo](https://media.giphy.com/media/fWA3ZLczZYCkaP1l17/giphy.gif)
 
 **App Instructions:**
