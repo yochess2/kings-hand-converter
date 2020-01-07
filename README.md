@@ -1,20 +1,40 @@
-hand converter for kingsclub
+# Kings Club Poker Hand Converter #
+This chrome extension app is written in pure javascript and jQuery
 
-**testing stage**  
-1. click "clone or download" (green button)
-2. click "download zip"
-3. goto folder and unzip
-4. click ":" button/menu on upper right corner
-5. goto "more tools" => "extensions"
-6. enable "developer mode" on upper right corner
-7. click "load unpack" on upper left corner
-8. find the "kings" folder (kings-master or whatever it's called) and then cilck on extension
-9. click select
-10. make sure the app is turned on
-11. restart chrome
-12. goto "kingsclub" => "hand archive"
+**Features:**
+- [x] pull all hands from kingsclub
+- [x] Converts the following games into Pokerstars format
+  - [x] Limit Hold'em
+  - [x] Omaha Hi-Lo
+  - [ ] No Limit Hold'em
+  - [ ] Pot Limit Omaha
+  - [ ] 2-7 Triple Draw
 
-**functionality:**  
-on upper right corner, there should be a burger king icon, enter number for  
-start: hh # to begin  
-end: hh # to end
+**TODO:**
+- [ ] Modularize Converter file
+- [ ] Testing
+
+**Nice to have features:**
+- [ ] show data for hero
+- [ ] show data for all villains
+- [ ] better UI
+
+**Download Instructions:**
+1. Click "clone or download" (green button), download zip, and unzip folder
+2. Open a new on chrome and type chrome://extensions
+3. Turn on developer mode (upper right corner)
+4. Click "Load unpacked" (upper left corner)
+5. Look for the kings folder, highlight extension, and click select
+6. Turn on the app, and you're good to go
+![download demo](https://media.giphy.com/media/fWA3ZLczZYCkaP1l17/giphy.gif)
+
+**App Instructions:**
+1. Log into your Kingsclub account, click "Archive"
+2. Click +50 until desired
+3. On the upper left corner of the main browser, click on the BK LOGO
+4. Type in the hand numbers to start and end
+5. On the archive window, right click, and click "Convert Hands"
+
+A window should appear after with the parsed hands.  
+Mac users can select all hands by holding onto **Command+A**  
+Windows users can select all hands by holding onto **CTRL+A**
