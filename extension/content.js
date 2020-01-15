@@ -66,7 +66,7 @@
       }
       beforeNum = currentNum
       const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem)
-      const convertedHand = convertHand(unconvertedHand)
+      const convertedHand = convert(unconvertedHand)
       printHand(unconvertedHand, convertedHand, displays, counter)
       isProcessed = true
       counter++
@@ -116,7 +116,7 @@
       displays.unconverted.document.title = d.unconverted.title
       displays.unconverted.document.write('<pre>')
       displays.handHistory.document.body.innerHTML = ''
-      displays.handHistory.document.title = d.unconverted.title
+      displays.handHistory.document.title = d.handHistory.title
       displays.handHistory.document.write('<pre>')
       h.hookAlert()
       h.hookAlert(displays.unconverted)

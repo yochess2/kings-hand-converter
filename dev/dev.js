@@ -15,7 +15,7 @@ files.forEach((file, fileIndex) => {
     }
     // if (handIndex === 1) {
       const oldHand = populateOldHand(oldHandText)
-      const newHand = converter.convertHand(oldHand)
+      const newHand = converter.convert(oldHand)
       if (newHand.display) {
         console.log(newHand.text)
       }
