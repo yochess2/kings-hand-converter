@@ -1,9 +1,9 @@
 //hand comes in lines and text
 
 // for development mode purposes
-module.exports = {
-  convertHand: convertHand
-}
+// module.exports = {
+//   convertHand: convertHand
+// }
 
 function convertHand(old_hand) {
   const re = {
