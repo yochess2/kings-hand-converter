@@ -1,5 +1,5 @@
 # Kings Club Poker Hand Converter #
-This chrome extension app is written in pure javascript and jQuery
+This chrome extension app is written in javascript
 
 **Features:**
 - [x] pull all hands from kingsclub
@@ -28,8 +28,6 @@ This chrome extension app is written in pure javascript and jQuery
 4. Click "Load unpacked" (upper left corner)
 5. Look for the kings folder, highlight extension, and click select
 6. Turn on the app, refresh the browser, and you're good to go
-
-![download demo](https://media.giphy.com/media/fWA3ZLczZYCkaP1l17/giphy.gif)
 
 **App Instructions:**
 1. Log into your Kingsclub account, click "Archive"
