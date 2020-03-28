@@ -94,7 +94,7 @@ function convert(old_hand) {
   // POKERSTARS CONVERSION
   function turnToStars(hd, re, old_hand, newHand) {
     const getButtonLine = (num) => num ? ` Seat #${num} is the button` : ''
-    const line_1 = `PokerStars Hand ${hd.hand_number}:  ${hd.type} (${hd.stake[0]}/${hd.stake[1]}) - ${hd.date[0]}/${hd.date[1]}/${hd.date[2]} ${hd.time[0]}:${hd.time[1]}:${hd.time[2]} ET`
+    const line_1 = `PokerStars Hand #${hd.hand_number}:  ${hd.type} ($${hd.stake[0]}/$${hd.stake[1]} USD) - ${hd.date[0]}/${hd.date[1]}/${hd.date[2]} ${hd.time[0]}:${hd.time[1]}:${hd.time[2]} ET`
     const line_2 = `Table '${hd.table}'${getButtonLine(hd.button_num)}`
     newHand.text += line_1 + '\n' + line_2 + '\n'
     if (hd.type === "Hold'em Limit"
@@ -123,7 +123,7 @@ function convert(old_hand) {
     i = populateBlinds(hd, re, old_hand, newHand, i, '*** HOLE CARDS ***\n')
     i = populateHands(hd, re, old_hand, newHand, i+1)
     // preflop
-    i = populateAction(i, re, old_hand, newHand, hd.bb[2])
+    i = populateAction(i, re, old_hand, newHand, hd.bb)
     // flop
     i = populateHeading(old_hand, re.flop_line, newHand, i)
     i = populateAction(i, re, old_hand, newHand, null)
@@ -145,7 +145,7 @@ function convert(old_hand) {
     i = populateBlinds(hd, re, old_hand, newHand, i+1, '*** DEALING HANDS ***\n')
     i = populateHands(hd, re, old_hand, newHand, i)
     // 1st betting round
-    i = populateAction(i, re, old_hand, newHand, hd.bb[2])
+    i = populateAction(i, re, old_hand, newHand, hd.bb)
     // 1st draw
     i = populateHeading(old_hand, re.draw_line, newHand, i, '*** FIRST DRAW ***\n')
     i = toDrawAction(i, old_hand, re, newHand, hd)
@@ -238,8 +238,8 @@ function convert(old_hand) {
     return i
   }
 
-  function populateAction(i, re, old_hand, newHand, blind_amount) {
-    let actionArr = toBettingAction(i, re, old_hand, blind_amount)
+  function populateAction(i, re, old_hand, newHand, blinds) {
+    let actionArr = toBettingAction(i, re, old_hand, blinds)
     i = actionArr[0]
     newHand.text += actionArr[1]
     return i
@@ -288,10 +288,18 @@ function convert(old_hand) {
     return i
   }
 
-  function toBettingAction(i, re, old_hand, bb_amount) {
+  function toBettingAction(i, re, old_hand, blinds) {
     let result = ''
     let action_line, show_line
-    let last_bet = parseFloat(bb_amount)
+    let last_bet, playersAction;
+    if (blinds) {
+      last_bet = parseFloat(blinds[2])
+      playersAction = {}
+      playersAction[blinds[0]] = parseFloat(blinds[2])
+    } else {
+      last_bet = 0
+      playersAction = {}
+    }
     let j = 0
     for (i; i < old_hand.lines.length; i++) {
       action_line = old_hand.lines[i].match(re.action_line)
@@ -305,15 +313,27 @@ function convert(old_hand) {
         if (action_line[3] === 'raises to') {
           result += ` raises $${last_bet} to $${action_line[5]}`
           last_bet = parseFloat(action_line[5])
+          playersAction[action_line[1]] = last_bet
         } else {
           result += ` ${action_line[3]}`
-          if (action_line[4]) {
+          if (action_line[4] && action_line[3] === 'bets') {
             result += ` $${action_line[5]}`
+            last_bet = parseFloat(action_line[5])
+            playersAction[action_line[1]] = last_bet
+          }
+          if (action_line[4] && action_line[3] === 'calls') {
+            if (playersAction[action_line[1]]) {
+              result += ` $${parseFloat(action_line[5]) - playersAction[action_line[1]]}`
+            } else {
+              result += ` $${action_line[5]}`
+            }
+            playersAction[action_line[1]] = parseFloat(action_line[5])
           }
         }
         // set bb_amount if there's a bet after preflop
         if (action_line[3] === 'bets') {
-          last_bet = action_line[5]
+          last_bet = parseFloat(action_line[5])
+          playersAction[action_line[1]] = last_bet
         }
         // check if there's all in
         if (action_line[6]) {
