@@ -83,7 +83,6 @@ function HELPER_METHODS() {
 
   function makeDisplay(url, title, specs) {
     const display = window.open(url, title, specs)
-    display.document.write('...')
     return display
   }
 }

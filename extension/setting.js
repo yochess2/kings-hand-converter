@@ -26,19 +26,4 @@ function APP_SETTING(type) {
     obj.doubleClickEvent.initEvent('dblclick', true, true)
     return obj
   }
-
-  if (type === 'display') {
-    return {
-      handHistory: {
-        url: 'result.html',
-        title: 'hand history',
-        specs: 'width=400,height=400,resizeable,scrollbars'
-      },
-      unconverted: {
-        url: 'unconverted.html',
-        title: 'unconverted hands',
-        specs: 'width=350,height=350,resizeable,scrollbars'
-      }
-    }
-  }
 }
