@@ -33,9 +33,5 @@ This chrome extension app is written in javascript
 1. Log into your Kingsclub account, click "Archive"
 2. Click +50 until desired (you can spam click this, app takes care of duplicates)
 3. On the upper left corner of the main browser, click on the BK LOGO
-4. Type in the hand numbers to start and end
+4. Type in the hand numbers to start (most recent hand) and end (last hand)
 5. On the archive window, right click, and click "Convert Hands"
-
-A window should appear after with the parsed hands.
-Mac users can select all hands by holding onto **Command+A**
-Windows users can select all hands by holding onto **CTRL+A**
