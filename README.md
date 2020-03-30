@@ -26,7 +26,7 @@ This chrome extension app is written in javascript
 2. Open chrome and goto chrome://extensions
 3. Turn on developer mode (upper right corner)
 4. Click "Load unpacked" (upper left corner)
-5. Look for the kings folder, highlight extension, and click select
+5. Look for the kings folder (SINGLE CLICK), highlight extension (SINGLE CLICK), and click select
 6. Turn on the app, refresh the browser, and you're good to go
 
 **App Instructions:**
