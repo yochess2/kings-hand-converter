@@ -54,7 +54,6 @@ function convert(old_hand) {
     // time: ["hour", "minute", "second"]
     // table: "Learn HORSE"
     // button: "1"
-    console.log(old_hand)
     const details_1 = old_hand.lines[0].match(re.line_1)
     const details_2 = old_hand.lines[1].match(re.line_2)
     const details_3 = old_hand.lines[2].match(re.line_3)
@@ -316,7 +315,6 @@ function convert(old_hand) {
         // check if action is a raise or other condition
         if (action_line[3] === 'raises to') {
           result += ` raises $${last_bet} to $${action_line[5]}`
-          // last_bet = parseFloat(action_line[5])
           playersAction[action_line[1]] = parseFloat(action_line[5])
           last_bet = parseFloat(action_line[5])
         } else {
@@ -335,11 +333,6 @@ function convert(old_hand) {
             playersAction[action_line[1]] = parseFloat(action_line[5])
           }
         }
-        // set bb_amount if there's a bet after preflop
-        // if (action_line[3] === 'bets') {
-        //   playersAction[action_line[1]] = parseFloat(action_line[5])
-        // }
-        // check if there's all in
         if (action_line[6]) {
           result += ' and is all-in'
         }
