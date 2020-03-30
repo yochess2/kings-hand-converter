@@ -14,6 +14,7 @@ This chrome extension app is written in javascript
 **TODO:**
 - [ ] Testing
 - [ ] Fix HHs with side pots and all-ins
+- [ ] Fix HHs where someone posts (site does not include this line)
 - [ ] Identify More HH bugs
 
 **Nice to have features:**
