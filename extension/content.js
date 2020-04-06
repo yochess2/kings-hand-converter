@@ -145,6 +145,7 @@
 
     cBtn.onclick = (stuff) => {
       let convertedBlob = new Blob([convertedStr], {type: "text/plain;charset=utf-8"})
+      console.log(convertedStr)
       saveAs(convertedBlob, "converted.txt");
     }
     uBtn.onclick = (stuff) => {
