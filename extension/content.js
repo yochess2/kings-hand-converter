@@ -2,40 +2,57 @@
   const h = HELPER_METHODS()
   const s = APP_SETTING('store')
   const p = APP_METHODS.parser
+  let delay = ms => new Promise(res => setTimeout(res, ms))
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.text === 'rightClicked') {
       handleClick(s.starting_hand_num, s.ending_hand_num)
       sendResponse('performing operation')
     }
+
+    if (msg.text === 'ONC') {
+      handleClick(null, null, true)
+      sendResponse('working on ONC')
+    }
   })
 
   // FUNCTION 1
-  async function handleClick(startNum, endNum) {
-    const app = await initApp(startNum, endNum)
+  async function handleClick(startNum, endNum, isOnc) {
+    const app = await initApp(startNum, endNum, isOnc)
     if (app.error.val) {
       return alert(app.error.text)
     }
-    const hasResults = await processArchive(
-      app.archiveHandElems,
-      app.downloadWin,
-      parseInt(app.store[startNum]),
-      parseInt(app.store[endNum])
-    )
+    if (isOnc) {
+      return await processOnc(
+        app.archiveHandElems, 
+        app.downloadWin
+      )
+    } else {
+      return await processArchive(
+        app.archiveHandElems,
+        app.downloadWin,
+        parseInt(app.store[startNum]),
+        parseInt(app.store[endNum])
+      )
+    }
   }
 
   // FUNCTION 1.1
-  async function initApp(startNum, endNum) {
+  async function initApp(startNum, endNum, isOnc) {
     const app = {
       error: {
         val: false
       },
-      store: await h.getStorage([startNum, endNum]),
-      archiveHandElems: h.getUnreadyElem(['.style_hh_workspace', '.lc_list'])[0].children,
       downloadWin: h.makeDisplay('downloads', '', 'width=350,height=350,resizeable,scrollbars')
     }
-    if (!(h.inputConditions(app.store[startNum], app.store[endNum]))) {
-      h.setError(app.error, true, "Something wrong with popup.js")
-      return app
+    if (isOnc) {
+      app.archiveHandElems = document.getElementById('lstHandNo').children
+    } else {
+      app.store = await h.getStorage([startNum, endNum])
+      app.archiveHandElems = h.getUnreadyElem(['.style_hh_workspace', '.lc_list'])[0].children
+      if (!(h.inputConditions(app.store[startNum], app.store[endNum]))) {
+        h.setError(app.error, true, "Something wrong with popup.js")
+        return app
+      }
     }
     if (!(app.archiveHandElems)) {
       h.setError(app.error, true, "Something wrong with the hands")
@@ -96,6 +113,75 @@
       saveAs(unConvertedBlob, "unconverted.txt");
     }
     return hasResults
+  }
+
+  async function processOnc(handsDropDown, downloadWin) {
+    let counter = 0, hasResults = false
+    let currentNum, beforeNum
+    let convertedStr = ''
+    let unConvertedStr = ''
+    const c = downloadWin.document.getElementById('c')
+    const u = downloadWin.document.getElementById('u')
+    console.log(`fetching ${handsDropDown.length} hands`)
+    for (const handDropDown of handsDropDown) {
+      let link = "HH_Parser_CashierPages.asp?Details="+handDropDown.value.replace(' ', "%20")
+      let unconvertedHand = await fetchHand(link)
+      convertedHand = convertOnc(unconvertedHand)
+      if (convertedHand.display) {
+        convertedStr += convertedHand.text
+        c.innerHTML = parseInt(c.innerHTML) + 1
+      } else {
+        unConvertedStr += unconvertedHand.text + '\n'
+        u.innerHTML = parseInt(u.innerHTML) + 1
+      }
+      counter++
+    }
+    const cBtn = document.createElement("BUTTON")
+    const uBtn = document.createElement("BUTTON")
+    cBtn.innerHTML = "Download"
+    uBtn.innerHTML = "Download"
+    c.appendChild(cBtn)
+    u.appendChild(uBtn)
+
+    cBtn.onclick = (stuff) => {
+      let convertedBlob = new Blob([convertedStr], {type: "text/plain;charset=utf-8"})
+      saveAs(convertedBlob, "converted.txt");
+    }
+    uBtn.onclick = (stuff) => {
+      let unConvertedBlob = new Blob([unConvertedStr], {type: "text/plain;charset=utf-8"});
+      saveAs(unConvertedBlob, "unconverted.txt");
+    }
+  }
+
+   //////////////////////////////
+  /// Parser Methods for ONC ///
+ //////////////////////////////
+  async function fetchHand(link) {
+    await delay(1)
+    return fetch(link).then((response) => {
+      return response.text()
+    }).then((data) => {
+      return getUnconvertedHand(data)
+    })
+  }
+
+  function getUnconvertedHand(data) {
+    let result = {
+      text: '',
+      lines: []
+    }
+    let lines = data.split(/\<\/span\>/)
+    lines.forEach((line) => {
+      let newLine = line
+        .replace(/\<span class\=blackheader\>/ig, '')
+        .replace(/\<br\>/ig, '')
+        .replace(/\<img src=.*\>/ig, '')
+      if (newLine !== '') {
+        result.text += newLine + '\n'
+        lines.push(newLine)
+      }
+    })
+    return result
   }
 
     ////// Helper //////

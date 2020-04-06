@@ -15,6 +15,7 @@
         "setting.js",
         "utils.js",
         "converter/converter.js",
+        "converter/converter_onc.js",
         "converter/parser.js",
         "content.js"
       ]
