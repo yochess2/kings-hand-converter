@@ -178,7 +178,7 @@
         .replace(/\<img src=.*\>/ig, '')
       if (newLine !== '') {
         result.text += newLine + '\n'
-        lines.push(newLine)
+        result.lines.push(newLine)
       }
     })
     return result
