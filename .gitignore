@@ -105,4 +105,6 @@ dist
 
 dev/hands/*
 dev/stars_hands/*
+dev/hands_onc/*
+dev/hands_kings/*
 .DS_STORE

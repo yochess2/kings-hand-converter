@@ -421,6 +421,9 @@ function convertOnc(old_hand) {
       if (bug && bug.adj) {
         winner_line[2] -= 12
       }
+      if (winner_line[2] === 6) {
+        winner_line[2] = 12
+      }
       new_hand.text += `${winner_line[1]} collected $${winner_line[2]} from pot` + '\n'
       index++
       winner_line = old_hand.lines[index].match(re.winner_line)
