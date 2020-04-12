@@ -18,7 +18,7 @@ function APP_SETTING(type) {
 
   if (type === 'archive') {
     let obj = {
-      timeToDelay: 5000,
+      timeToDelay: 10000,
       clickEvent: document.createEvent('MouseEvents'),
       doubleClickEvent: document.createEvent('MouseEvents'),
     }
