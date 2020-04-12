@@ -130,7 +130,7 @@
       let unconvertedHand = await fetchHand(link)
       convertedHand = convertOnc(unconvertedHand)
       if (convertedHand.display) {
-        convertedStr += convertedHand.text
+        convertedStr += convertedHand.text + '\n'
         c.innerHTML = parseInt(c.innerHTML) + 1
       } else {
         unConvertedStr += unconvertedHand.text + '\n'
