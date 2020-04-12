@@ -308,7 +308,8 @@ function convert(old_hand) {
       action_line = old_hand.lines[i].match(re.action_line)
       show_line = old_hand.lines[i].match(re.show_line)
       if (show_line) {
-        j+=1
+        // console.log(old_hand.lines[i])
+        // j+=1
       }
       if (action_line) {
         result += `${action_line[1]}:`

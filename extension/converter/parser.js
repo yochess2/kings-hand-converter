@@ -26,7 +26,8 @@
         closeModal()
         break
       }
-      if (counter > 500) {
+      if (counter > a.timeToDelay) {
+        console.log('time out!!!!')
         handleTimeout(result, archiveHandElem)
         closeModal()
         break
