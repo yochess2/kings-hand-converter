@@ -106,10 +106,12 @@
 
     cBtn.onclick = (stuff) => {
       let convertedBlob = new Blob([convertedStr], {type: "text/plain;charset=utf-8"})
+      console.log(convertedStr)
       saveAs(convertedBlob, "converted.txt");
     }
     uBtn.onclick = (stuff) => {
       let unConvertedBlob = new Blob([unConvertedStr], {type: "text/plain;charset=utf-8"});
+      console.log(convertedStr)
       saveAs(unConvertedBlob, "unconverted.txt");
     }
     return hasResults
