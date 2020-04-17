@@ -6,7 +6,7 @@
 // }
 
 function convertOnc(old_hand, show_error) {
-  return convertHand(old_hand)
+  return convertHand(old_hand,show_error)
   function convertHand(old_hand, show_error) {
     const re = {
       hand_line: /^\*\*\*\*\* Hand History for hand : (\d+) \*\*\*\*\*$/i,

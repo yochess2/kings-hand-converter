@@ -34,13 +34,15 @@ async function process(files) {
         handIndex++
         continue
       }
-      const newHand = converter_onc.convertOnc(oldHand, false)
+      const newHand = converter_onc.convertOnc(oldHand, true)
       if (newHand.display) {
         fileStr += newHand.text + '\n'
       }
       handIndex++
     }
-    await saveFile(folder_2, filename, fileStr)
+
+    // UNCOMMENT THIS LINE
+    // await saveFile(folder_2, filename, fileStr)
     fileIndex++
   }
 
