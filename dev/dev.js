@@ -20,7 +20,6 @@ files.forEach((file, fileIndex) => {
       const newHand = converter_onc.convertOnc(oldHand)
       if (newHand.display) {
         console.log(newHand.text)
-        // console.log(oldHand.text + '\n')
       }
     // }
   })

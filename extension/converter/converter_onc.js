@@ -1,26 +1,26 @@
 //hand comes in lines and text
 
 // for development mode purposes
-// module.exports = {
-//   convertOnc: convertOnc
-// }
+module.exports = {
+  convertOnc: convertOnc
+}
 
 function convertOnc(old_hand) {
   return convertHand(old_hand)
   function convertHand(old_hand) {
     const re = {
       hand_line: /^\*\*\*\*\* Hand History for hand : (\d+) \*\*\*\*\*$/i,
-      game_date_line: /^(\w+) (Hold'em|OmahaHiLo) Blinds\((6)\/(12)\)  - (\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+) (AM|PM)$/i,
+      game_date_line: /^(\w+) (Hold'em|OmahaHiLo) Blinds\((\d+)\/(\d+)\)  - (\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+) (AM|PM)$/i,
       table_line: /^Table (\d+)$/i,
       dealer_line: /^Seat (\d) is dealer$/i,
       players_line: /^Total no of players : (\d)$/i,
       seat_line: /^Seat (\d): (.*) \( (\d*\.?\,?\d*\.?\d+) \)(   \[SITOUT\])?$/i,
       blind_line: /^(.*) posts( missed)?( (Small) Blind| (Big) Blind)? \[(\d*\.?\,?\d*\.?\d+)\]$/i,
-      dealt_line: /^(.*) dealt \[(\*|\w+),(\*|\w+)\]$/i,
+      dealt_line: /^(.*) dealt \[(\*|\w+)\,(\*|\w+)(\,(\*|\w+))?(\,(\*|\w+))?\]$/i,
       flop_line: /^\*\* Dealing (Flop) \*\*\[(\w+)\, (\w+)\, (\w+)\]$/i,
       turn_line: /^\*\* Dealing (Turn) \*\*\[(\w+)\]$/,
       river_line: /^\*\* Dealing (River) \*\*\[(\w+)\]$/,
-      show_line: /(.*) (shows) \[(\w+) \, (\w+)\]/i,
+      show_line: /(.*) (shows) \[(\w+) \, (\w+)( \, (\w+))?( \, (\w+))?\]/i,
       muck_line: /^(.*) mucks cards\.$/i,
       refund_line: /^(.*) was Refunded the Uncalled bet (\d*\.?\,?\d*\.?\d+) from pot.$/i,
       winner_line: /^(.*) wins (\d*\.?\,?\d*\.?\d+) from pot(.*)$/i,
@@ -143,9 +143,12 @@ function convertOnc(old_hand) {
 
   function isGameCoverage(hand_details) {
     let result = false
-    if (hand_details.game_type[0] === 'BL' && hand_details.game_type[1] === "Hold'em") {
+    if (hand_details.game_type[0] === 'BL' && (hand_details.game_type[1] === "Hold'em" || hand_details.game_type[1] === "OmahaHiLo")) {
       hand_details.convertable = true
       hand_details.stars_game_type = "Hold'em Limit"
+      if (hand_details.game_type[1] === 'OmahaHiLo') {
+        hand_details.stars_game_type = "'Omaha Hi/Lo Limit'"
+      }
       result = true
     }
     return result
@@ -242,6 +245,9 @@ function convertOnc(old_hand) {
     while (hand_match) {
       if (hand_match[2] !== '*') {
         hand_details.dealt = [hand_match[1], fixCards(hand_match[2]), fixCards(hand_match[3])]
+        if (hand_details.game_type[1] === 'OmahaHiLo') {
+          hand_details.dealt = [hand_match[1], fixCards(hand_match[2]), fixCards(hand_match[3]), fixCards(hand_match[5]), fixCards(hand_match[7])]
+        }
       }
       index++
       hand_match = old_hand.lines[index].match(re.dealt_line)      
@@ -280,9 +286,15 @@ function convertOnc(old_hand) {
       new_hand.text += missed_lines.join('\n') + '\n'
     }
     const hole_line = '*** HOLE CARDS ***'
-    const dealt_line = `Dealt to ${hd.dealt[0]} [${hd.dealt[1]} ${hd.dealt[2]}]`
-    new_hand.text += hole_line + '\n' + dealt_line + '\n'
-    
+    if (!(hd.dealt)) {
+      new_hand.text += hole_line + '\n'
+    } else {
+      let dealt_line = `Dealt to ${hd.dealt[0]} [${hd.dealt[1]} ${hd.dealt[2]}]`
+      if (hd.game_type[1] === 'OmahaHiLo') {
+        dealt_line = `Dealt to ${hd.dealt[0]} [${hd.dealt[1]} ${hd.dealt[2]} ${hd.dealt[3]} ${hd.dealt[4]}]`
+      }
+      new_hand.text += hole_line + '\n' + dealt_line + '\n'
+    }
     // action
     index = populateAction(hd, re, old_hand, new_hand, index, 'flop_line')
     if (new_hand.side) {
@@ -356,7 +368,11 @@ function convertOnc(old_hand) {
           new_hand.text += `*** RIVER *** [${hd.flop[0]} ${hd.flop[1]} ${hd.flop[2]} ${hd.turn}] [${hd.river}]` + '\n'
         } else if (header_line[2].toLowerCase() === 'shows') {
           new_hand.text += '*** SHOW DOWN ***' + '\n'
-          new_hand.text += `${header_line[1]}: shows [${fixCards(header_line[3])} ${fixCards(header_line[4])}]` + '\n'
+          if (hd.game_type[1] === 'OmahaHiLo') {
+            new_hand.text += `${header_line[1]}: shows [${fixCards(header_line[3])} ${fixCards(header_line[4])} ${fixCards(header_line[6])} ${fixCards(header_line[8])}]` + '\n'
+          } else {
+            new_hand.text += `${header_line[1]}: shows [${fixCards(header_line[3])} ${fixCards(header_line[4])}]` + '\n'
+          }
         } else { 
           console.error('something went wrong with action')
         }
@@ -384,11 +400,11 @@ function convertOnc(old_hand) {
       } else if (action === 'raises') {
         let raise_amount = 0
         if (str === 'flop_line' || str === 'turn_line') {
-          raise_amount = 12
-          hd.last_bet += 12
+          raise_amount = parseFloat(hd.stakes[0])
+          hd.last_bet += parseFloat(hd.stakes[0])
         } else {
-          raise_amount = 24
-          hd.last_bet += 24
+          raise_amount = (parseFloat(hd.stakes[0]) * 2)
+          hd.last_bet += (parseFloat(hd.stakes[0]) * 2)
         }
         new_hand.text += `${action_line[1]}: raises $${raise_amount} to $${raise_amount + hd.last_bet}` + '\n'
       } else if (action === 'calls') {
@@ -419,14 +435,18 @@ function convertOnc(old_hand) {
     }
     while (winner_line) {
       if (bug && bug.adj) {
-        winner_line[2] -= 12
+        winner_line[2] -= parseFloat(hd.stakes[0])
       }
-      if (winner_line[2] === 6) {
-        winner_line[2] = 12
+      if (winner_line[2] === 6 || winner_line[2] === 4) {
+        winner_line[2] = parseFloat(hd.stakes[0])
       }
       new_hand.text += `${winner_line[1]} collected $${winner_line[2]} from pot` + '\n'
       index++
-      winner_line = old_hand.lines[index].match(re.winner_line)
+      if (old_hand.lines[index]) {
+        winner_line = old_hand.lines[index].match(re.winner_line)
+      } else {
+        break
+      }
     }
     new_hand.text += `*** SUMMARY ***` + '\n'
     new_hand.display = true
