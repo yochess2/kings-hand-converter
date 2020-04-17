@@ -1,16 +1,16 @@
 //hand comes in lines and text
 
 // for development mode purposes
-module.exports = {
-  convertOnc: convertOnc
-}
+// module.exports = {
+//   convertOnc: convertOnc
+// }
 
-function convertOnc(old_hand) {
+function convertOnc(old_hand, show_error) {
   return convertHand(old_hand)
-  function convertHand(old_hand) {
+  function convertHand(old_hand, show_error) {
     const re = {
       hand_line: /^\*\*\*\*\* Hand History for hand : (\d+) \*\*\*\*\*$/i,
-      game_date_line: /^(\w+) (Hold'em|OmahaHiLo) Blinds\((\d+)\/(\d+)\)  - (\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+) (AM|PM)$/i,
+      game_date_line: /^(\w+) (Hold'em|OmahaHiLo) Blinds\((\d*\.?\,?\d*\.?\d+)\/(\d*\.?\,?\d*\.?\d+)\)  - (\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+) (AM|PM)$/i,
       table_line: /^Table (\d+)$/i,
       dealer_line: /^Seat (\d) is dealer$/i,
       players_line: /^Total no of players : (\d)$/i,
@@ -49,8 +49,12 @@ function convertOnc(old_hand) {
     }
     index = populateHandDetails(hand_details, re, old_hand)
     if (hand_details.error) {
-      console.error('populateHandDetails error')
       new_hand.error = true
+      if (hand_details.hand_number) {
+        if (show_error) {
+          console.error('populateHandDetails error: ' + hand_details.hand_number)
+        }
+      }
       return new_hand
     }
     if (!(isGameCoverage(hand_details))) {
@@ -59,20 +63,26 @@ function convertOnc(old_hand) {
     }
     index = populatePlayers(hand_details, re, old_hand, index)
     if (hand_details.error) {
-      console.error('populatePlayers error')
+      if (show_error) {
+        console.error('populatePlayers error')
+      }
       new_hand.error = true
       return new_hand
     }
     index++
     index = getBlinds(hand_details, re, old_hand, index)
     if (hand_details.error) {
-      console.error('getBlinds error')
+      if (show_error) {
+        console.error('getBlinds error')
+      }
       new_hand.error = true
       return new_hand
     }
     index = getHands(hand_details, re, old_hand, index)
     if (hand_details.error) {
-      console.error('getHands error')
+      if (show_error) {
+        console.error('getHands error, likely straddle: ' + hand_details.hand_number)
+      }
       new_hand.error = true
       return new_hand
     }
@@ -128,6 +138,9 @@ function convertOnc(old_hand) {
     }
     if (!(isMatches)) {
       hand_details.error = true
+      if (matches.hand_number) {
+        hand_details.hand_number = matches.hand_number[1]
+      }
       return null
     }
     hand_details.hand_number = matches.hand_number[1]
@@ -381,6 +394,7 @@ function convertOnc(old_hand) {
       }
       toBettingAction(hd, re, old_hand, new_hand, index, str)
       if (new_hand.side) {
+        console.error('side pot: ' + hd.hand_number)
         return
       }
       index++

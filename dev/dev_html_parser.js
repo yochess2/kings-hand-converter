@@ -1,7 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 const files = fs.readdirSync('./onc_grabber/')
+// const files = fs.readdirSync('./hands/')
 const folder = './onc_grabber/'
+// const folder = './hands/'
 const folder_2 = './onc_grabber_done/'
 const converter_onc = require('../extension/converter/converter_onc.js')
 
@@ -20,17 +22,13 @@ files.forEach((file, fileIndex) => {
       if (oldHand.lines.length <= 11) {
         return
       }
-      // console.log(oldHand.text)
-      const newHand = converter_onc.convertOnc(oldHand)
+      const newHand = converter_onc.convertOnc(oldHand, true)
       if (newHand.display) {
         fileStr += newHand.text + '\n'
       }
     // }
   })
-  fs.writeFile(`${folder_2}${filename}.txt`, fileStr, function (err) {
-    if (err) return console.log(err);
-    console.log(`${filename} was a success!`);
-  });
+  // saveFile(folder_2, filename, fileStr)
 })
 
 function populateOldHand(text) {
@@ -90,3 +88,10 @@ function filterHand(oldHandText) {
   })
   return hand
 } 
+
+function saveFile(folder_2, filename, fileStr) {
+  fs.writeFile(`${folder_2}${filename}.txt`, fileStr, function (err) {
+    if (err) return console.log(err);
+    // console.log(`${filename} was a success!`);
+  })
+}
