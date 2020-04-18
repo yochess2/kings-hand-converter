@@ -42,7 +42,7 @@ async function process(files) {
     }
 
     // UNCOMMENT THIS LINE
-    // await saveFile(folder_2, filename, fileStr)
+    await saveFile(folder_2, filename, fileStr)
     fileIndex++
   }
 
