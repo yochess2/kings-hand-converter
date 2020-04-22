@@ -14,9 +14,11 @@
         "dependencies/FileSaver.min.js",
         "setting.js",
         "utils.js",
-        "converter/converter.js",
         "converter/converter_onc.js",
-        "converter/parser.js",
+        "converter/converter_kings.js",
+        "converter/parser_kings.js",
+        "converter/process_kings.js",
+        "converter/process_onc.js",
         "content.js"
       ]
     }

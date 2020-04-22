@@ -2,7 +2,7 @@
   const h = HELPER_METHODS()
   const a = APP_SETTING('archive')
 
-  APP_METHODS.parser = {
+  APP_METHODS.parserKings = {
     fetchUnconvertedHand: fetchUnconvertedHand,
     clickHand: clickHand,
     isFullscreenMask: isFullscreenMask,
