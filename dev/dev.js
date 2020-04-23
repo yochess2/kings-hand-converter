@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const files = fs.readdirSync('./hands/')
 const folder = './hands/'
-const converter = require('../extension/converter/converter.js')
+const converter = require('../extension/converter/converter_kings.js')
 // const converter_onc = require('../extension/converter/converter_onc.js')
 
 

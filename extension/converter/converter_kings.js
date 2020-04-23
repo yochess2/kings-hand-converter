@@ -278,7 +278,7 @@ function convert(old_hand) {
       winner_line = old_hand.lines[i].match(re.winner_line_1) || old_hand.lines[i].match(re.winner_line_2)
       if (winner_line) {
         newHand.text += `${winner_line[1]} collected $${winner_line[3]} from pot\n`
-        pot_total += parseFloat(winner_line[3])
+        pot_total += parseFloat(winner_line[3].replace(',', ''))
       } else {
         break
       }
