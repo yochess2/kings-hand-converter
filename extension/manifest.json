@@ -10,7 +10,7 @@
     {
       "matches": ["<all_urls>", "https://kingsclubpkr.com/archive.html"],
       "js": [
-        "dependencies/jquery-3.4.1.min.js",
+        "dependencies/jquery-3.5.0.js",
         "dependencies/FileSaver.js",
         "setting.js",
         "utils.js",
