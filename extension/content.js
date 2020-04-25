@@ -60,6 +60,7 @@
     app.downloadWin.document.write(`<div>Total Hands: <span class="handcount">${app.archiveHandElems.length}</span</div>`)
     app.downloadWin.document.write(`<div>Convertable Hands: <span id="c">0</span></div>`)
     app.downloadWin.document.write(`<div>Unconvertable Hands: <span id="u">0</span></div>`)
+    app.downloadWin.document.write(`<div>Last Converted Hand: <span id="l"></span></div>`)
     return app
   }
 })(APP_SETTING, APP_METHODS, HELPER_METHODS)

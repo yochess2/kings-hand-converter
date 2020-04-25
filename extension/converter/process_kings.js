@@ -13,6 +13,7 @@
     let unConvertedStr = ''
     const c = downloadWin.document.getElementById('c')
     const u = downloadWin.document.getElementById('u')
+    const l = downloadWin.document.getElementById('l')
     for (const archiveHandElem of archiveHandElems) {
       if (!(validHand(archiveHandElem))) {
         continue
@@ -26,6 +27,11 @@
       }
       beforeNum = currentNum
       const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem)
+      if (unconvertedHand.error) {
+        break
+      }
+
+
       const convertedHand = convert(unconvertedHand)
 
       if (convertedHand.display === true) {
@@ -35,6 +41,7 @@
         unConvertedStr += unconvertedHand.text + '\n'
         u.innerHTML = parseInt(u.innerHTML) + 1
       }
+      l.innerHTML = currentNum
       counter++
     }
 
