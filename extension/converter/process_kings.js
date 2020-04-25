@@ -14,13 +14,20 @@
     const l = downloadWin.document.getElementById('l')
     const d = downloadWin.document.getElementById('d')
     const lag = downloadWin.document.getElementById('lag')
+    const stop = downloadWin.document.getElementById('stop')
+
     let it = {
       counter: 0,
       startNum: startNum,
       endNum: endNum,
       convertedStr: '',
-      unConvertedStr: ''
+      unConvertedStr: '',
+      isStop: false
     }
+    stop.onclick = () => {
+      it.isStop = true
+    }
+
     await loopIt(archiveHandElems, it, c, u, l, d, lag)
 
     const elem_fiddy = document.getElementsByClassName('style_button style_banner_button')[0]
@@ -28,11 +35,11 @@
     let hand_count = elem_hand_count.innerHTML
     let outer_counter = 0
     if ((autoClick === 'yes') && (!(it.error)) && (outer_counter < 1000)) {
-      while (!(isLastHand(it.endNum, it.currentNum))) {
+      while (!(isLastHand(it.endNum, it.currentNum)) && !(it.isStop)) {
         let inner_counter = 0
         hand_count = elem_hand_count.innerHTML // 50
         elem_fiddy.click()
-        while ((hand_count === elem_hand_count.innerHTML) && (inner_counter < 1000)) {
+        while ((hand_count === elem_hand_count.innerHTML) && (inner_counter < 1000) && (!(it.isStop))) {
           elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
           lag.innerHTML = `${parseInt(inner_counter/100)}/${a.timeToDelay/100}`
           await h.delay(1)
@@ -69,6 +76,9 @@
 
   async function loopIt(archiveHandElems, it, c, u, l, d, lag) {
     for (const archiveHandElem of archiveHandElems) {
+      if (it.isStop) {
+        break
+      }
       if (!(validHand(archiveHandElem))) {
         continue
       }
