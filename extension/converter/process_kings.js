@@ -26,12 +26,8 @@
     const elem_fiddy = document.getElementsByClassName('style_button style_banner_button')[0]
     let elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
     let hand_count = elem_hand_count.innerHTML
-    let start_hand = 0
-    let end_hand = 49
-    if ((autoClick === 'yes') && (!(it.error))) {
-      start_hand += 50
-      end_hand += 50
-      // console.log('auto click feature not yet available')
+    let outer_counter = 0
+    if ((autoClick === 'yes') && (!(it.error)) && (outer_counter < 1000)) {
       while (!(isLastHand(it.endNum, it.currentNum))) {
         let inner_counter = 0
         hand_count = elem_hand_count.innerHTML // 50
@@ -45,6 +41,9 @@
         if (inner_counter <= a.timeToDelay) {
           await loopIt(archiveHandElems, it, c, u, l, d, lag)
         }
+        await h.delay(1)
+        console.log('outer counter (testing purposes):', outer_counter, '/1000')
+        outer_counter++
       }
     }
 
