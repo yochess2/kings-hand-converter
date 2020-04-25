@@ -20,13 +20,31 @@
       convertedStr: '',
       unConvertedStr: ''
     }
+    await loopIt(archiveHandElems, it, c, u, l, d, lag)
+
     const elem_fiddy = document.getElementsByClassName('style_button style_banner_button')[0]
     let elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
     let hand_count = elem_hand_count.innerHTML
-
-    await loopIt(archiveHandElems, it, c, u, l, d, lag)
+    let start_hand = 0
+    let end_hand = 49
     if ((autoClick === 'yes') && (!(it.error))) {
-      console.log('auto click feature not yet available')
+      start_hand += 50
+      end_hand += 50
+      // console.log('auto click feature not yet available')
+      while (!(isLastHand(it.endNum, it.currentNum))) {
+        let inner_counter = 0
+        hand_count = elem_hand_count.innerHTML // 50
+        elem_fiddy.click()
+        while ((hand_count === elem_hand_count.innerHTML) && (inner_counter < 1000)) {
+          elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
+          lag.innerHTML = `${inner_counter/10}/${1000/10}`
+          await h.delay(10)
+          inner_counter++
+        }
+        if (inner_counter <= 1000) {
+          await loopIt(archiveHandElems, it, c, u, l, d, lag)
+        }
+      }
     }
 
     const cBtn = document.createElement("BUTTON")
@@ -55,7 +73,13 @@
         continue
       }
       it.currentNum = getCurrentArchiveHandNum(archiveHandElem)
-      if (skipHand(it.currentNum, it.beforeNum, it.startNum)) {
+      if (it.newBatchNum) {
+       if (it.currentNum >= it.newBatchNum) {
+        continue
+       } 
+      }
+
+      if (skipHand(it.currentNum, it.startNum)) {
         continue
       }
       if (duplicateHand(it.currentNum, it.beforeNum, it.startNum)) {
@@ -80,7 +104,7 @@
         u.innerHTML = parseInt(u.innerHTML) + 1
       }
       l.innerHTML = it.currentNum
-      it.counter++
+      it.newBatchNum = it.currentNum
     }
   }
 
@@ -100,12 +124,12 @@
   }
 
   // 2 conditions
-  //   - currentNum is equal to the # from hand before (takes care of +50 glitch)
   //   - startingNum is still smaller than the # from the 1st hand
-  function skipHand(currentNum, beforeNum, startNum) {
+  function skipHand(currentNum, startNum) {
     return (startNum < currentNum)
   }
 
+  //   - currentNum is equal to the # from hand before (takes care of +50 glitch)
   function duplicateHand(currentNum, beforeNum, startNum) {
     return (currentNum === beforeNum)
   }
