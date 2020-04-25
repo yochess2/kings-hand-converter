@@ -38,3 +38,4 @@ This chrome extension app is written in javascript
 **UPDATE 4/25/2020**
 - [x] +50 feature is now automated
 - [x] app closes if lag on site persists for 100 seconds
+- [x] ONC is supported
