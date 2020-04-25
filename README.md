@@ -18,8 +18,6 @@ This chrome extension app is written in javascript
 - [ ] Identify More HH bugs
 
 **Nice to have features:**
-- [ ] show data for hero
-- [ ] show data for all villains
 - [ ] better UI
 
 **Download Instructions:**
@@ -36,3 +34,7 @@ This chrome extension app is written in javascript
 3. On the upper left corner of the main browser, click on the BK LOGO
 4. Type in the hand numbers to start (most recent hand) and end (last hand)
 5. On the archive window, right click, and click "Convert Hands"
+
+**UPDATE 4/25/2020**
+- [x] +50 feature is now automated
+- [x] app closes if lag on site persists for 100 seconds
