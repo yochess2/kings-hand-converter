@@ -15,6 +15,7 @@
     const d = downloadWin.document.getElementById('d')
     const lag = downloadWin.document.getElementById('lag')
     const stop = downloadWin.document.getElementById('stop')
+    const handcount = downloadWin.document.getElementById('handcount')
 
     let it = {
       counter: 0,
@@ -46,6 +47,7 @@
           inner_counter++
         }
         if (inner_counter <= a.timeToDelay) {
+          handcount.innerHTML = archiveHandElems.length
           await loopIt(archiveHandElems, it, c, u, l, d, lag)
         }
         await h.delay(1)

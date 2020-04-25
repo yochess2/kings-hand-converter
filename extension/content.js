@@ -58,7 +58,7 @@
       h.setError(app.error, true, "Something wrong with the hands")
       return app
     }
-    app.downloadWin.document.write(`<div>Total Hands: <span class="handcount">${app.archiveHandElems.length}</span</div>`)
+    app.downloadWin.document.write(`<div>Total Hands: <span id="handcount">${app.archiveHandElems.length}</span></div>`)
     app.downloadWin.document.write(`<div>Convertable Hands: <span id="c">0</span></div>`)
     app.downloadWin.document.write(`<div>Unconvertable Hands: <span id="u">0</span></div>`)
     app.downloadWin.document.write(`<div>Duplicate Bug: <span id="d">0</span></div>`)
