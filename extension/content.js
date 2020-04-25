@@ -62,7 +62,7 @@
     app.downloadWin.document.write(`<div>Convertable Hands: <span id="c">0</span></div>`)
     app.downloadWin.document.write(`<div>Unconvertable Hands: <span id="u">0</span></div>`)
     app.downloadWin.document.write(`<div>Duplicate Bug: <span id="d">0</span></div>`)
-    app.downloadWin.document.write(`<div>Last Converted Hand: <span id="l"></span></div>`)
+    app.downloadWin.document.write(`<div>Last Hand: <span id="l"></span></div>`)
     app.downloadWin.document.write(`<div>Lag (will auto-close at 100): <span id="lag"></span></div>`)
     app.downloadWin.document.write(`<div>Click to Stop: <button id="stop">STOP</button></div>`)
     return app
