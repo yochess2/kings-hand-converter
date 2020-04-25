@@ -14,12 +14,17 @@
     const c = downloadWin.document.getElementById('c')
     const u = downloadWin.document.getElementById('u')
     const l = downloadWin.document.getElementById('l')
+    const d = downloadWin.document.getElementById('d')
     for (const archiveHandElem of archiveHandElems) {
       if (!(validHand(archiveHandElem))) {
         continue
       }
       currentNum = getCurrentArchiveHandNum(archiveHandElem)
       if (skipHand(currentNum, beforeNum, startNum)) {
+        continue
+      }
+      if (duplicateHand(currentNum, beforeNum, startNum)) {
+        d.innerHTML = parseInt(d.innerHTML) + 1
         continue
       }
       if (isLastHand(endNum, currentNum)) {
@@ -83,7 +88,11 @@
   //   - currentNum is equal to the # from hand before (takes care of +50 glitch)
   //   - startingNum is still smaller than the # from the 1st hand
   function skipHand(currentNum, beforeNum, startNum) {
-    return ((currentNum === beforeNum) || (startNum < currentNum))
+    return (startNum < currentNum)
+  }
+
+  function duplicateHand(currentNum, beforeNum, startNum) {
+    return (currentNum === beforeNum)
   }
 
   // Checks If current hand num is less than endNum
