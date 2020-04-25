@@ -63,6 +63,7 @@
     app.downloadWin.document.write(`<div>Unconvertable Hands: <span id="u">0</span></div>`)
     app.downloadWin.document.write(`<div>Duplicate Bug: <span id="d">0</span></div>`)
     app.downloadWin.document.write(`<div>Last Converted Hand: <span id="l"></span></div>`)
+    app.downloadWin.document.write(`<div>Lag (will auto-close at 100): <span id="lag"></span></div>`)
     return app
   }
 })(APP_SETTING, APP_METHODS, HELPER_METHODS)

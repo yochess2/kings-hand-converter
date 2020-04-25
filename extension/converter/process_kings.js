@@ -12,6 +12,7 @@
     const u = downloadWin.document.getElementById('u')
     const l = downloadWin.document.getElementById('l')
     const d = downloadWin.document.getElementById('d')
+    const lag = downloadWin.document.getElementById('lag')
     let it = {
       counter: 0,
       startNum: startNum,
@@ -23,7 +24,7 @@
     let elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
     let hand_count = elem_hand_count.innerHTML
 
-    await loopIt(archiveHandElems, it, c, u, l, d)
+    await loopIt(archiveHandElems, it, c, u, l, d, lag)
     if ((autoClick === 'yes') && (!(it.error))) {
       console.log('auto click feature not yet available')
     }
@@ -48,7 +49,7 @@
     return hasResults
   }
 
-  async function loopIt(archiveHandElems, it, c, u, l, d) {
+  async function loopIt(archiveHandElems, it, c, u, l, d, lag) {
     for (const archiveHandElem of archiveHandElems) {
       if (!(validHand(archiveHandElem))) {
         continue
@@ -65,7 +66,7 @@
         break
       }
       it.beforeNum = it.currentNum
-      const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem)
+      const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem, lag)
       if (unconvertedHand.error) {
         it.error = true
         break

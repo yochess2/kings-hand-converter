@@ -11,7 +11,7 @@
     closeModal: closeModal
   }
 
-  async function fetchUnconvertedHand(archiveHandElem) {
+  async function fetchUnconvertedHand(archiveHandElem, lag) {
     const result = {
       text: '',
       lines: [],
@@ -26,8 +26,8 @@
         closeModal()
         break
       }
-      if ((counter % 1000 === 0) && (counter !== 0)) {
-        console.log(`process will shut down due to lag in: ${counter/1000}/${a.timeToDelay/1000} seconds/units/whatever`)
+      if ((counter % 100 === 0) && (counter !== 0)) {
+        lag.innerHTML = `${counter/100}/${a.timeToDelay/100}`
       }
       if (counter > a.timeToDelay) {
         console.log('time out!!!!')
@@ -37,6 +37,7 @@
       }
       counter++
     }
+    lag.innerHTML = '0/100'
     return result
   }
 
