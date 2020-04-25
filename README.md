@@ -15,7 +15,7 @@ This chrome extension app is written in javascript
 - [ ] Testing
 - [ ] Fix HHs with side pots and all-ins
 - [ ] Fix HHs where someone posts (site does not include this line)
-- [ ] Identify More HH bugs
+- [ ] Get freekin filesaver to save text files (so far, it saves every file as "download")
 
 **Nice to have features:**
 - [ ] better UI
