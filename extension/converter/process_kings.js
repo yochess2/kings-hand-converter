@@ -1,6 +1,7 @@
 ((APP_SETTING, APP_METHODS, HELPER_METHODS) => {
   const h = HELPER_METHODS()
   const p = APP_METHODS.parserKings
+  const a = APP_SETTING('archive')
 
   APP_METHODS.processKings = {
   	processArchive: processArchive
@@ -37,11 +38,11 @@
         elem_fiddy.click()
         while ((hand_count === elem_hand_count.innerHTML) && (inner_counter < 1000)) {
           elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
-          lag.innerHTML = `${inner_counter/10}/${1000/10}`
-          await h.delay(10)
+          lag.innerHTML = `${parseInt(inner_counter/100)}/${a.timeToDelay/100}`
+          await h.delay(1)
           inner_counter++
         }
-        if (inner_counter <= 1000) {
+        if (inner_counter <= a.timeToDelay) {
           await loopIt(archiveHandElems, it, c, u, l, d, lag)
         }
       }
