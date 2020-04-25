@@ -6,48 +6,26 @@
   	processArchive: processArchive
   }
 
-  async function processArchive(archiveHandElems, downloadWin, startNum, endNum) {
-    let counter = 0, hasResults = false
-    let currentNum, beforeNum
-    let convertedStr = ''
-    let unConvertedStr = ''
+  async function processArchive(archiveHandElems, downloadWin, startNum, endNum, autoClick) {
+    let hasResults = false
     const c = downloadWin.document.getElementById('c')
     const u = downloadWin.document.getElementById('u')
     const l = downloadWin.document.getElementById('l')
     const d = downloadWin.document.getElementById('d')
-    for (const archiveHandElem of archiveHandElems) {
-      if (!(validHand(archiveHandElem))) {
-        continue
-      }
-      currentNum = getCurrentArchiveHandNum(archiveHandElem)
-      if (skipHand(currentNum, beforeNum, startNum)) {
-        continue
-      }
-      if (duplicateHand(currentNum, beforeNum, startNum)) {
-        d.innerHTML = parseInt(d.innerHTML) + 1
-        continue
-      }
-      if (isLastHand(endNum, currentNum)) {
-        break
-      }
-      beforeNum = currentNum
-      const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem)
-      if (unconvertedHand.error) {
-        break
-      }
+    let it = {
+      counter: 0,
+      startNum: startNum,
+      endNum: endNum,
+      convertedStr: '',
+      unConvertedStr: ''
+    }
+    const elem_fiddy = document.getElementsByClassName('style_button style_banner_button')[0]
+    let elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
+    let hand_count = elem_hand_count.innerHTML
 
-
-      const convertedHand = convert(unconvertedHand)
-
-      if (convertedHand.display === true) {
-        convertedStr += convertedHand.text + '\n'
-        c.innerHTML = parseInt(c.innerHTML) + 1
-      } else {
-        unConvertedStr += unconvertedHand.text + '\n'
-        u.innerHTML = parseInt(u.innerHTML) + 1
-      }
-      l.innerHTML = currentNum
-      counter++
+    await loopIt(archiveHandElems, it, c, u, l, d)
+    if ((autoClick === 'yes') && (!(it.error))) {
+      console.log('auto click feature not yet available')
     }
 
     const cBtn = document.createElement("BUTTON")
@@ -58,17 +36,53 @@
     u.appendChild(uBtn)
 
     cBtn.onclick = (stuff) => {
-      let convertedBlob = new Blob([convertedStr], {type: "text/plain;charset=utf-8"})
-      console.log(convertedStr)
+      let convertedBlob = new Blob([it.convertedStr], {type: "text/plain;charset=utf-8"})
+      console.log(it.convertedStr)
       saveAs(convertedBlob, "converted.txt");
     }
     uBtn.onclick = (stuff) => {
-      let unConvertedBlob = new Blob([unConvertedStr], {type: "text/plain;charset=utf-8"});
-      console.log(unConvertedStr)
+      let unConvertedBlob = new Blob([it.unConvertedStr], {type: "text/plain;charset=utf-8"});
+      console.log(it.unConvertedStr)
       saveAs(unConvertedBlob, "unconverted.txt");
     }
     return hasResults
   }
+
+  async function loopIt(archiveHandElems, it, c, u, l, d) {
+    for (const archiveHandElem of archiveHandElems) {
+      if (!(validHand(archiveHandElem))) {
+        continue
+      }
+      it.currentNum = getCurrentArchiveHandNum(archiveHandElem)
+      if (skipHand(it.currentNum, it.beforeNum, it.startNum)) {
+        continue
+      }
+      if (duplicateHand(it.currentNum, it.beforeNum, it.startNum)) {
+        d.innerHTML = parseInt(d.innerHTML) + 1
+        continue
+      }
+      if (isLastHand(it.endNum, it.currentNum)) {
+        break
+      }
+      it.beforeNum = it.currentNum
+      const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem)
+      if (unconvertedHand.error) {
+        it.error = true
+        break
+      }
+      const convertedHand = convert(unconvertedHand)
+      if (convertedHand.display === true) {
+        it.convertedStr += convertedHand.text + '\n'
+        c.innerHTML = parseInt(c.innerHTML) + 1
+      } else {
+        it.unConvertedStr += unconvertedHand.text + '\n'
+        u.innerHTML = parseInt(u.innerHTML) + 1
+      }
+      l.innerHTML = it.currentNum
+      it.counter++
+    }
+  }
+
 
     ////// Helper //////
    /* processArchive */

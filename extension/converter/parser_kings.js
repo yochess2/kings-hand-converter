@@ -26,6 +26,9 @@
         closeModal()
         break
       }
+      if ((counter % 1000 === 0) && (counter !== 0)) {
+        console.log(`process will shut down due to lag in: ${counter/1000}/${a.timeToDelay/1000} seconds/units/whatever`)
+      }
       if (counter > a.timeToDelay) {
         console.log('time out!!!!')
         handleTimeout(result, archiveHandElem)

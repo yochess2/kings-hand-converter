@@ -6,18 +6,18 @@
 
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.text === 'rightClicked') {
-      handleClick(s.starting_hand_num, s.ending_hand_num)
+      handleClick(s.starting_hand_num, s.ending_hand_num, s.auto_click_num)
       sendResponse('performing operation')
     }
 
     if (msg.text === 'ONC') {
-      handleClick(null, null, true)
+      handleClick(null, null, null, true)
       sendResponse('working on ONC')
     }
   })
 
-  async function handleClick(startNum, endNum, isOnc) {
-    const app = await initApp(startNum, endNum, isOnc)
+  async function handleClick(startNum, endNum, autoClick, isOnc) {
+    const app = await initApp(startNum, endNum, autoClick, isOnc)
     if (app.error.val) {
       return alert(app.error.text)
     }
@@ -31,12 +31,13 @@
         app.archiveHandElems,
         app.downloadWin,
         parseInt(app.store[startNum]),
-        parseInt(app.store[endNum])
+        parseInt(app.store[endNum]),
+        app.store[autoClick]
       )
     }
   }
 
-  async function initApp(startNum, endNum, isOnc) {
+  async function initApp(startNum, endNum, autoClick, isOnc) {
     const app = {
       error: {
         val: false
@@ -46,7 +47,7 @@
     if (isOnc) {
       app.archiveHandElems = document.getElementById('lstHandNo').children
     } else {
-      app.store = await h.getStorage([startNum, endNum])
+      app.store = await h.getStorage([startNum, endNum, autoClick])
       app.archiveHandElems = h.getUnreadyElem(['.style_hh_workspace', '.lc_list'])[0].children
       if (!(h.inputConditions(app.store[startNum], app.store[endNum]))) {
         h.setError(app.error, true, "Something wrong with popup.js")

@@ -2,7 +2,8 @@ function APP_SETTING(type) {
   if (type === 'store') {
     return {
       starting_hand_num: 'starting-hand-num',
-      ending_hand_num: 'ending-hand-num'
+      ending_hand_num: 'ending-hand-num',
+      auto_click_num: 'auto-click-num'
     }
   }
 
@@ -12,7 +13,8 @@ function APP_SETTING(type) {
       ending_input_id: '#ending-input',
       starting_hand_num_id: '#starting-hand',
       ending_hand_num_id: '#ending-hand',
-      submit_button_id: '#submit-button'
+      submit_button_id: '#submit-button',
+      auto_click_num_id: '#auto-click'
     }
   }
 
