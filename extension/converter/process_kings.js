@@ -64,14 +64,16 @@
     u.appendChild(uBtn)
 
     cBtn.onclick = (stuff) => {
-      let convertedBlob = new Blob([it.convertedStr], {type: "text/plain;charset=utf-8"})
       console.log(it.convertedStr)
-      saveAs(convertedBlob, "converted.txt");
+      chrome.runtime.sendMessage({text: 'download', str: it.convertedStr})
+      // let convertedBlob = new Blob([it.convertedStr], {type: "text/plain;charset=utf-8"})
+      // saveAs(convertedBlob, "converted.txt");
     }
     uBtn.onclick = (stuff) => {
-      let unConvertedBlob = new Blob([it.unConvertedStr], {type: "text/plain;charset=utf-8"});
       console.log(it.unConvertedStr)
-      saveAs(unConvertedBlob, "unconverted.txt");
+      chrome.runtime.sendMessage({text: 'download', str: it.unConvertedStr})
+      // let unConvertedBlob = new Blob([it.unConvertedStr], {type: "text/plain;charset=utf-8"})
+      // saveAs(unConvertedBlob, "unconverted.txt");
     }
     return hasResults
   }

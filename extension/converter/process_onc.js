@@ -10,12 +10,20 @@
     let counter = 0, hasResults = false
     let convertedStr = ''
     let unConvertedStr = ''
+    let isStop = false
     const c = downloadWin.document.getElementById('c')
     const u = downloadWin.document.getElementById('u')
     const l = downloadWin.document.getElementById('l')
+    const stop = downloadWin.document.getElementById('stop')
+    stop.onclick = () => {
+      isStop = true
+    }
 
     console.log(`fetching ${handsDropDown.length} hands`)
     for (const handDropDown of handsDropDown) {
+      if (isStop) {
+        break
+      }
       let link = "HH_Parser_CashierPages.asp?Details="+handDropDown.value.replace(' ', "%20")
       let unconvertedHand = await fetchHand(link)
       convertedHand = convertOnc(unconvertedHand)
@@ -37,15 +45,17 @@
     u.appendChild(uBtn)
 
     cBtn.onclick = (stuff) => {
-      let convertedBlob = new Blob([convertedStr], {type: "text/plain;charset=utf-8"})
+      chrome.runtime.sendMessage({text: 'download', str: convertedStr})
       console.log(convertedStr)
-      saveAs(convertedBlob, "converted.txt");
+      // let convertedBlob = new Blob([convertedStr], {type: "text/plain;charset=utf-8"})
+      // saveAs(convertedBlob, "converted.txt")
     }
     uBtn.onclick = (stuff) => {
-      let unConvertedBlob = new Blob([unConvertedStr], {type: "text/plain;charset=utf-8"})
       console.log(unConvertedStr)
+      chrome.runtime.sendMessage({text: 'download', str: unConvertedStr})
+      // let unConvertedBlob = new Blob([unConvertedStr], {type: "text/plain;charset=utf-8"})
+      // saveAs(unConvertedBlob, "unconverted.txt")
 
-      saveAs(unConvertedBlob, "unconverted.txt");
     }
   }
 

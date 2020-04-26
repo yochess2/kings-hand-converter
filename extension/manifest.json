@@ -23,9 +23,9 @@
       ]
     }
   ],
-  "permissions": ["storage", "contextMenus"],
+  "permissions": ["storage", "contextMenus", "downloads"],
   "background": {
-    "scripts": ["menu.js"],
+    "scripts": ["menu.js", "background.js"],
     "persistent": false
   },
   "browser_action": {
