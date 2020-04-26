@@ -66,14 +66,10 @@
     cBtn.onclick = (stuff) => {
       console.log(it.convertedStr)
       chrome.runtime.sendMessage({text: 'download', str: it.convertedStr})
-      // let convertedBlob = new Blob([it.convertedStr], {type: "text/plain;charset=utf-8"})
-      // saveAs(convertedBlob, "converted.txt");
     }
     uBtn.onclick = (stuff) => {
       console.log(it.unConvertedStr)
       chrome.runtime.sendMessage({text: 'download', str: it.unConvertedStr})
-      // let unConvertedBlob = new Blob([it.unConvertedStr], {type: "text/plain;charset=utf-8"})
-      // saveAs(unConvertedBlob, "unconverted.txt");
     }
     return hasResults
   }
