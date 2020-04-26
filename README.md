@@ -15,7 +15,6 @@ This chrome extension app is written in javascript
 - [ ] Testing
 - [ ] Fix HHs with side pots and all-ins
 - [ ] Fix HHs where someone posts (site does not include this line)
-- [ ] Get freekin filesaver to save text files (so far, it saves every file as "download")
 
 **Nice to have features:**
 - [ ] better UI
@@ -45,3 +44,6 @@ This chrome extension app is written in javascript
 - [x] +50 feature is now automated
 - [x] app closes if lag on site persists for 100 seconds
 - [x] ONC is supported (ask for details)
+
+**UPDATE 4/26/2020**
+- [x] Fix download link
