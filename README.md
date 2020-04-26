@@ -35,7 +35,8 @@ This chrome extension app is written in javascript
 5. On the archive window, right click, and click "Convert Hands"
 6. When done, click "download" (download link will appear)
 7. If download is blocked, 
-  - open developer tools (cmd+option+i for mac, ctrl+shift+j win), and 
+  - open developer tools on the archive window 
+    (cmd+option+i for mac, ctrl+shift+j win), and 
   - click on console
   - copy text
   - paste into "notepad" and save as a .txt file
