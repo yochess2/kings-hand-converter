@@ -14,22 +14,22 @@ function convert(old_hand) {
       line_2: /^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$/,
       line_3: /^Table '(.*(?='))'( Seat (\d) is the button)?$/,
 
-      seat_line: /^Seat (\d): ((\w+\s*\-*\@*){1,10}) \((\d*\.?\,?\d*\.?\d+)\)( \((\d*\.?\,?\d*\.?\d+) pts\))?$/,
-      blind_line: /^((\w+\s*\-*\@*){1,10}): posts the (small|big) blind (\d*\.?\,?\d*\.?\d+)(\, and is (all in))?$/,
-      hand_line: /^Dealt to ((\w+\s*\-*\@*){1,10}): \[(\w+) (\w+)( (\w+) (\w+))?( (\w+))?\]$/,
-      action_line: /^((\w+\s*\-*\@*){1,10}) (folds|checks|calls|bets|raises to)( (\d*\.?\,?\d*\.?\d+))?(\, and is (all in))?$/,
+      seat_line: /^Seat (\d): ((\w+\s*\-*\@*\.*){1,10}) \((\d*\.?\,?\d*\.?\d+)\)( \((\d*\.?\,?\d*\.?\d+) pts\))?$/,
+      blind_line: /^((\w+\s*\-*\@*\.*){1,10}): posts the (small|big) blind (\d*\.?\,?\d*\.?\d+)(\, and is (all in))?$/,
+      hand_line: /^Dealt to ((\w+\s*\-*\@*\.*){1,10}): \[(\w+) (\w+)( (\w+) (\w+))?( (\w+))?\]$/,
+      action_line: /^((\w+\s*\-*\@*\.*){1,10}) (folds|checks|calls|bets|raises to)( (\d*\.?\,?\d*\.?\d+))?(\, and is (all in))?$/,
 
       flop_line: /^\*\*\* FLOP \*\*\* \[(\w+) (\w+) (\w+)\]$/,
       turn_line: /^\*\*\* TURN \*\*\* \[\w+ \w+ \w+\] \[(\w+)\]$/,
       river_line: /^\*\*\* RIVER \*\*\* \[\w+ \w+ \w+ \w+\] \[(\w+)\]$/,
-      show_line: /^((\w+\s*\-*\@*){1,10}) shows (\[\w+ \w+( \w+ \w+)?( \w+)?\])$/,
+      show_line: /^((\w+\s*\-*\@*\.*){1,10}) shows (\[\w+ \w+( \w+ \w+)?( \w+)?\])$/,
 
-      draw_action_line_1: /^((\w+\s*\-*\@*){1,10}) (stands pat|draws)( (\d))?$/,
-      draw_action_line_2: /^((\w+\s*\-*\@*){1,10}) discards (\[(\w+)\s*(\w*)\s*(\w*)\s*(\w*)\s*(\w*)\s*\]) draws \[(\w+)\s*(\w*)\s*(\w*)\s*(\w*)\s*(\w*)\s*\]$/,
+      draw_action_line_1: /^((\w+\s*\-*\@*\.*){1,10}) (stands pat|draws)( (\d))?$/,
+      draw_action_line_2: /^((\w+\s*\-*\@*\.*){1,10}) discards (\[(\w+)\s*(\w*)\s*(\w*)\s*(\w*)\s*(\w*)\s*\]) draws \[(\w+)\s*(\w*)\s*(\w*)\s*(\w*)\s*(\w*)\s*\]$/,
       draw_line: /^\*\*\* (\w+ DRAW) \*\*\*$/,
 
-      winner_line_1: /^((\w+\s*\-*\@*){1,10}) wins pot \((\d*\.?\,?\d*\.?\d+)\)$/,
-      winner_line_2: /^((\w+\s*\-*\@*){1,10}) wins \((\d*\.?\,?\d*\.?\d+)\) from pot$/,
+      winner_line_1: /^((\w+\s*\-*\@*\.*){1,10}) wins pot \((\d*\.?\,?\d*\.?\d+)\)$/,
+      winner_line_2: /^((\w+\s*\-*\@*\.*){1,10}) wins \((\d*\.?\,?\d*\.?\d+)\) from pot$/,
       rake_line: /^Rake (\d*\.?\,?\d*\.?\d+)$/
     }
     const hand_details = {}

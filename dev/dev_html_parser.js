@@ -1,10 +1,8 @@
 const fs = require('fs')
 const path = require('path')
-const files = fs.readdirSync('./onc_grabber/')
-// const files = fs.readdirSync('./hands/')
-const folder = './onc_grabber/'
-// const folder = './hands/'
-const folder_2 = './onc_grabber_done/'
+const files = fs.readdirSync('./hands/')
+const folder = './hands/'
+const folder_2 = './hands_onc/'
 const converter_onc = require('../extension/converter/converter_onc.js')
 
 process(files)
