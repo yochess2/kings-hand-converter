@@ -9,18 +9,19 @@
 
   async function processArchive(archiveHandElems, downloadWin, startNum, endNum, autoClick) {
     let hasResults = false
+    const hc = downloadWin.document.getElementById('handcount')
     const c = downloadWin.document.getElementById('c')
     const u = downloadWin.document.getElementById('u')
-    const l = downloadWin.document.getElementById('l')
     const d = downloadWin.document.getElementById('d')
+    const l = downloadWin.document.getElementById('l')
     const lag = downloadWin.document.getElementById('lag')
     const stop = downloadWin.document.getElementById('stop')
-    const handcount = downloadWin.document.getElementById('handcount')
 
     let it = {
       counter: 0,
       startNum: startNum,
       endNum: endNum,
+      originalStr: '',
       convertedStr: '',
       unConvertedStr: '',
       isStop: false
@@ -29,7 +30,7 @@
       it.isStop = true
     }
 
-    await loopIt(archiveHandElems, it, c, u, l, d, lag)
+    await loopIt(archiveHandElems, it, c, u, l, d, hc, lag)
 
     const elem_fiddy = document.getElementsByClassName('style_button style_banner_button')[0]
     let elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
@@ -47,8 +48,8 @@
           inner_counter++
         }
         if (inner_counter <= a.timeToDelay) {
-          handcount.innerHTML = archiveHandElems.length
-          await loopIt(archiveHandElems, it, c, u, l, d, lag)
+          hc.innerHTML = archiveHandElems.length
+          await loopIt(archiveHandElems, it, c, u, l, d, hc, lag)
         }
         await h.delay(1)
         console.log('outer counter (testing purposes):', outer_counter, '/1000')
@@ -58,23 +59,27 @@
 
     const cBtn = document.createElement("BUTTON")
     const uBtn = document.createElement("BUTTON")
+    const hcBtn = document.createElement("BUTTON")
     cBtn.innerHTML = "Download"
     uBtn.innerHTML = "Download"
+    hcBtn.innerHTML = "Download"
     c.appendChild(cBtn)
     u.appendChild(uBtn)
+    hc.appendChild(hcBtn)
 
     cBtn.onclick = (stuff) => {
-      console.log(it.convertedStr)
       chrome.runtime.sendMessage({text: 'download', str: it.convertedStr})
     }
     uBtn.onclick = (stuff) => {
-      console.log(it.unConvertedStr)
       chrome.runtime.sendMessage({text: 'download', str: it.unConvertedStr})
+    }
+    hcBtn.onclick = (stuff) => {
+      chrome.runtime.sendMessage({text: 'download', str: it.originalStr})
     }
     return hasResults
   }
 
-  async function loopIt(archiveHandElems, it, c, u, l, d, lag) {
+  async function loopIt(archiveHandElems, it, c, u, l, d, hc, lag) {
     for (const archiveHandElem of archiveHandElems) {
       if (it.isStop) {
         break
@@ -105,6 +110,7 @@
         it.error = true
         break
       }
+      it.originalStr += unconvertedHand.text + '\n'
       const convertedHand = convert(unconvertedHand)
       if (convertedHand.display === true) {
         it.convertedStr += convertedHand.text + '\n'

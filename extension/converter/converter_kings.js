@@ -1,9 +1,9 @@
 //hand comes in lines and text
 
 // for development mode purposes
-// module.exports = {
-//   convert: convert
-// }
+module.exports = {
+  convert: convert
+}
 
 
 function convert(old_hand) {
@@ -140,6 +140,9 @@ function convert(old_hand) {
 
     // captures post
     let post = []
+    for (let player in hd.check_preflop) {
+      post.push(hd.check_preflop[player])
+    }
     for (i; i < old_hand.lines.length; i++) {
       let m_fold = old_hand.lines[i].match(/Seat (\d): (.*) \(.*\) (.*)/)
       if (m_fold) {
@@ -360,12 +363,25 @@ function convert(old_hand) {
         if (hasBlinds) {
           hd.fold_preflop = hd.fold_preflop || {}
           hd.call_preflop = hd.call_preflop || {}
+          hd.check_preflop = hd.check_preflop || {}
           if (action_line[3] === 'calls') {
             hd.call_preflop[action_line[1]] = action_line
+            if (hd.check_preflop[action_line[1]]) {
+              if (action_line[1] !== hd.bb[0]) {
+                // action_line[4] 
+                action_line[4] = ' ' + parseFloat(hd.bb[2])
+                action_line[5] = '' + parseFloat(hd.bb[2])
+              }
+            }
+          }
+          if (action_line[3] === 'checks' && action_line[1] !== hd.bb[0]) {
+            hd.check_preflop[action_line[1]] = action_line
           }
           if (action_line[3] === 'folds' && action_line[1] !== hd.bb[0]) {
             if (!(hd.call_preflop[action_line[1]])) {
-              hd.fold_preflop[action_line[1]] = action_line
+              if (!(hd.check_preflop[action_line[1]])) {
+                hd.fold_preflop[action_line[1]] = action_line
+              }
             }
           }
         }
