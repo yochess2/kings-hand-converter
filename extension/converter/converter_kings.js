@@ -359,10 +359,15 @@ function convert(old_hand) {
         // to capture posting
         if (hasBlinds) {
           hd.fold_preflop = hd.fold_preflop || {}
-          if (action_line[3] === 'folds' && action_line[1] !== hd.bb[0]) {
-            hd.fold_preflop[action_line[1]] = action_line
+          hd.call_preflop = hd.call_preflop || {}
+          if (action_line[3] === 'calls') {
+            hd.call_preflop[action_line[1]] = action_line
           }
-
+          if (action_line[3] === 'folds' && action_line[1] !== hd.bb[0]) {
+            if (!(hd.call_preflop[action_line[1]])) {
+              hd.fold_preflop[action_line[1]] = action_line
+            }
+          }
         }
         result += `${action_line[1]}:`
         // check if action is a raise or other condition
