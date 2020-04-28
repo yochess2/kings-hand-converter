@@ -138,6 +138,30 @@ function convert(old_hand) {
     // for winner and summary
     i = populateWinnerAndSummary(i, old_hand, re, newHand)
 
+    let post = []
+    for (let player in hd.check_preflop) {
+      post.push(hd.check_preflop[player])
+    }
+
+    for (i; i < old_hand.lines.length; i++) {
+      let m_fold = old_hand.lines[i].match(/Seat (\d): (.*) \(.*\) (.*)/)
+      if (m_fold) {
+        if (parseFloat(m_fold[3]) * -1 == parseFloat(hd.bb[2])) {
+          for (let player in hd.fold_preflop) {
+            if (m_fold[2] === player && player !== hd.bb[0]) {
+              post.push(hd.fold_preflop[player])
+            }
+          }
+        }
+      }
+    }
+    post.forEach((player) => {
+      let startStr = newHand.text.slice(0, hd.post_index)
+      let endStr = newHand.text.slice(hd.post_index)
+      let insert = player[1] + ': posts big blind $' + hd.bb[2] + '\n'
+      hd.post_index = (startStr + insert).length
+      newHand.text = startStr + insert + endStr
+    })
   }
 
   function toTdAndPopulate(hd, re, old_hand, newHand) {
@@ -197,6 +221,7 @@ function convert(old_hand) {
         break
       }
     }
+    hd.post_index = newHand.text.length
     newHand.text += heading
     return i
   }
@@ -307,7 +332,7 @@ function convert(old_hand) {
     } else {
       newHand.text += `Total pot $${pot_total} | Rake $${rake}\n`
     }
-    return i
+    return i+1
   }
 
   function toBettingAction(i, re, old_hand, hd, hasBlinds) {
@@ -334,6 +359,20 @@ function convert(old_hand) {
         j+= 2
       }
       if (action_line) {
+        // to capture posting
+        if (hasBlinds) {
+          hd.check_preflop = hd.check_preflop || {}
+          if (action_line[3] === 'checks' && action_line[1] !== hd.bb[0]) {
+            hd.check_preflop[action_line[1]] = action_line
+          }
+          hd.fold_preflop = hd.fold_preflop || {}
+          if (action_line[3] === 'folds' && action_line[1] !== hd.bb[0]) {
+            if (!(hd.check_preflop[action_line[1]])) {
+              hd.fold_preflop[action_line[1]] = action_line
+            }
+          }
+
+        }
         result += `${action_line[1]}:`
         // check if action is a raise or other condition
         if (action_line[3] === 'raises to') {
