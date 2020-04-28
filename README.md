@@ -43,6 +43,6 @@ This chrome extension app is written in javascript
 **UPDATE 4/26/2020**
 - [x] Fix blocked download link
 
-**UPDATE 4/26/2020**
+**UPDATE 4/28/2020**
 - [x] Capture all side pots with just 1 all-in (not available yet for ONC)
 - [x] Capture most post situations (eg. CO posts)
