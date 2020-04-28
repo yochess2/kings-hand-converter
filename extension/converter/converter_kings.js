@@ -1,9 +1,9 @@
 //hand comes in lines and text
 
 // for development mode purposes
-// module.exports = {
-//   convert: convert
-// }
+module.exports = {
+  convert: convert
+}
 
 
 function convert(old_hand) {
@@ -123,16 +123,16 @@ function convert(old_hand) {
     i = populateBlinds(hd, re, old_hand, newHand, i, '*** HOLE CARDS ***\n')
     i = populateHands(hd, re, old_hand, newHand, i+1)
     // preflop
-    i = populateAction(i, re, old_hand, newHand, hd)
+    i = populateAction(i, re, old_hand, newHand, hd, true)
     // flop
     i = populateHeading(old_hand, re.flop_line, newHand, i)
-    i = populateAction(i, re, old_hand, newHand, null)
+    i = populateAction(i, re, old_hand, newHand, hd, null)
     // turn
     i = populateHeading(old_hand, re.turn_line, newHand, i)
-    i = populateAction(i, re, old_hand, newHand, null)
+    i = populateAction(i, re, old_hand, newHand, hd, null)
     // river
     i = populateHeading(old_hand, re.river_line, newHand, i)
-    i = populateAction(i, re, old_hand, newHand, null)
+    i = populateAction(i, re, old_hand, newHand, hd, null)
     // showdown line
     i = populateShowdown(i, old_hand, re, newHand)
     // for winner and summary
@@ -145,22 +145,22 @@ function convert(old_hand) {
     i = populateBlinds(hd, re, old_hand, newHand, i+1, '*** DEALING HANDS ***\n')
     i = populateHands(hd, re, old_hand, newHand, i)
     // 1st betting round
-    i = populateAction(i, re, old_hand, newHand, hd)
+    i = populateAction(i, re, old_hand, newHand, hd, true)
     // 1st draw
     i = populateHeading(old_hand, re.draw_line, newHand, i, '*** FIRST DRAW ***\n')
     i = toDrawAction(i, old_hand, re, newHand, hd)
     // 2nd betting around
-    i = populateAction(i, re, old_hand, newHand, null)
+    i = populateAction(i, re, old_hand, newHand, hd, null)
     // 2nd draw
     i = populateHeading(old_hand, re.draw_line, newHand, i, '*** SECOND DRAW ***\n')
     i = toDrawAction(i, old_hand, re, newHand, hd)
     // 3rd betting around
-    i = populateAction(i, re, old_hand, newHand, null)
+    i = populateAction(i, re, old_hand, newHand, hd, null)
     // 3rd draw
     i = populateHeading(old_hand, re.draw_line, newHand, i, '*** THIRD DRAW ***\n')
     i = toDrawAction(i, old_hand, re, newHand, hd)
     // 4th betting around
-    i = populateAction(i, re, old_hand, newHand, null)
+    i = populateAction(i, re, old_hand, newHand, hd, null)
     // showdown line
     i = populateShowdown(i, old_hand, re, newHand)
     // for winner and summary
@@ -238,8 +238,8 @@ function convert(old_hand) {
     return i
   }
 
-  function populateAction(i, re, old_hand, newHand, blinds) {
-    let actionArr = toBettingAction(i, re, old_hand, blinds)
+  function populateAction(i, re, old_hand, newHand, hd, hasBlinds) {
+    let actionArr = toBettingAction(i, re, old_hand, hd, hasBlinds)
     i = actionArr[0]
     newHand.text += actionArr[1]
     return i
@@ -248,6 +248,10 @@ function convert(old_hand) {
   function populateShowdown(i, old_hand, re, newHand) {
     let showdown_declared = false
     let show_line
+    if (!(old_hand.lines[i].match(/(.*) shows \[(.*)\]/))) {
+      // A) no showdown
+      i -= 2
+    }
     for (i; i < old_hand.lines.length; i++) {
       show_line = old_hand.lines[i].match(re.show_line)
       if (show_line) {
@@ -257,6 +261,11 @@ function convert(old_hand) {
         }
         newHand.text += `${show_line[1]}: shows ${show_line[3]}\n`
       } else {
+        if (showdown_declared) {
+        } else {
+          // A) no showdown
+          i += 2
+        }
         break
       }
     }
@@ -266,14 +275,23 @@ function convert(old_hand) {
   function populateWinnerAndSummary(i, old_hand, re, newHand) {
     let pot_total = 0
     let rake = 0
-    let rake_line = old_hand.lines[(old_hand.lines.length -1)].match(re.rake_line)
+    let rake_line = old_hand.lines[(old_hand.lines.length -1)].match(re.rake_line) || 
+      old_hand.lines[(old_hand.lines.length -2)].match(re.rake_line) ||
+      old_hand.lines[(old_hand.lines.length -3)].match(re.rake_line)
     if (rake_line) {
       rake = parseFloat(rake_line[1])
       pot_total += rake
     }
+
+    let side_line = old_hand.lines[i].match(/(.*) wins side pot 1 \((.*)\)/)
+    if (side_line) {
+      newHand.text += `${side_line[1]} collected $${side_line[2]} from side pot\n`
+      i+=1
+    }
+
     // winner line
     let winner_line_1 = old_hand.lines[i].match(re.winner_line_1)
-    let winner_line_2 = old_hand.lines[i].match(re.winner_line_2)
+    let winner_line_2 = old_hand.lines[i].match(re.winner_line_2)   
     for (i; i < old_hand.lines.length; i++) {
       winner_line = old_hand.lines[i].match(re.winner_line_1) || old_hand.lines[i].match(re.winner_line_2)
       if (winner_line) {
@@ -284,32 +302,36 @@ function convert(old_hand) {
       }
     }
     newHand.text += "*** SUMMARY ***\n"
-    newHand.text += `Total pot $${pot_total} | Rake $${rake}\n`
+    if (side_line) {
+      newHand.text += `Total pot $${pot_total+parseFloat(side_line[2])}. Main pot $${pot_total-rake}. Side pot $${side_line[2]}. | Rake $${rake}\n`
+    } else {
+      newHand.text += `Total pot $${pot_total} | Rake $${rake}\n`
+    }
     return i
   }
 
-  function toBettingAction(i, re, old_hand, blinds) {
+  function toBettingAction(i, re, old_hand, hd, hasBlinds) {
+    hd.hasSideLine = false
     let result = ''
     let action_line, show_line
     let last_bet = 0
     let playersAction = {}
     let j = 0
-    if (blinds) {
-      if (blinds.sb) {
-        playersAction[blinds.sb[0]] = parseFloat(blinds.sb[2])
-        last_bet = parseFloat(blinds.sb[2])
+    if (hasBlinds) {
+      if (hd.sb) {
+        playersAction[hd.sb[0]] = parseFloat(hd.sb[2])
+        last_bet = parseFloat(hd.sb[2])
       }
-      if (blinds.bb) {
-        playersAction[blinds.bb[0]] = parseFloat(blinds.bb[2])
-        last_bet = parseFloat(blinds.bb[2])
+      if (hd.bb) {
+        playersAction[hd.bb[0]] = parseFloat(hd.bb[2])
+        last_bet = parseFloat(hd.bb[2])
       }
     }
     for (i; i < old_hand.lines.length; i++) {
       action_line = old_hand.lines[i].match(re.action_line)
       show_line = old_hand.lines[i].match(re.show_line)
       if (show_line) {
-        // console.log(old_hand.lines[i])
-        // j+=1
+        j+= 2
       }
       if (action_line) {
         result += `${action_line[1]}:`
