@@ -1,9 +1,9 @@
 //hand comes in lines and text
 
 // for development mode purposes
-module.exports = {
-  convert: convert
-}
+// module.exports = {
+//   convert: convert
+// }
 
 
 function convert(old_hand) {
