@@ -13,8 +13,8 @@ This chrome extension app is written in javascript
 
 **TODO:**
 - [ ] Testing
-- [ ] Fix HHs with side pots and all-ins
-- [ ] Fix HHs where someone posts (site does not include this line)
+- [ ] Fix HHs with 2+ all-ins and all-in preflop
+- [ ] Fix various edge cases of postings preflop (eg. CO posts)
 
 **Nice to have features:**
 - [ ] better UI
@@ -34,12 +34,6 @@ This chrome extension app is written in javascript
 4. Type in the hand numbers to start (most recent hand) and end (last hand)
 5. On the archive window, right click, and click "Convert Hands"
 6. When done, click "download" (download link will appear)
-7. If download is blocked, 
-  - open developer tools on the archive window 
-    (cmd+option+i for mac, ctrl+shift+j win), and 
-  - click on console
-  - copy text
-  - paste into "notepad" and save as a .txt file
 
 **UPDATE 4/25/2020**
 - [x] +50 feature is now automated
@@ -47,8 +41,8 @@ This chrome extension app is written in javascript
 - [x] ONC is supported (ask for details)
 
 **UPDATE 4/26/2020**
-- [x] Fix download link
+- [x] Fix blocked download link
 
 **UPDATE 4/26/2020**
-- [x] Capture all side pots with just 1 all-in
+- [x] Capture all side pots with just 1 all-in (not available yet for ONC)
 - [x] Capture most post situations (eg. CO posts)
