@@ -41,18 +41,24 @@
         let inner_counter = 0
         hand_count = elem_hand_count.innerHTML // 50
         elem_fiddy.click()
-        while ((hand_count === elem_hand_count.innerHTML) && (inner_counter < 1000) && (!(it.isStop))) {
+        while ((hand_count === elem_hand_count.innerHTML) && (inner_counter < a.timeToDelay) && (!(it.isStop))) {
           elem_hand_count = document.getElementsByClassName('style_status_bar_pane')[1]
           lag.innerHTML = `${parseInt(inner_counter/100)}/${a.timeToDelay/100}`
           await h.delay(1)
           inner_counter++
         }
-        if (inner_counter <= a.timeToDelay) {
+        if (inner_counter <= a.timeToDelay + 1) {
           hc.innerHTML = archiveHandElems.length
+          await h.delay(1)
+          it.looped = false
           await loopIt(archiveHandElems, it, c, u, l, d, hc, lag)
+          if (!(it.looped)) {
+            h.delay(2000)
+          }
+        } else {
+          lag.innerHTML = `TIME OUT`
+          break
         }
-        await h.delay(1)
-        console.log('outer counter (testing purposes):', outer_counter, '/1000')
         outer_counter++
       }
     }
@@ -81,24 +87,18 @@
 
   async function loopIt(archiveHandElems, it, c, u, l, d, hc, lag) {
     for (const archiveHandElem of archiveHandElems) {
-      if (it.isStop) {
-        break
-      }
-      if (!(validHand(archiveHandElem))) {
-        continue
-      }
+      if (it.isStop) { break }
+      if (!(validHand(archiveHandElem))) { continue }
       it.currentNum = getCurrentArchiveHandNum(archiveHandElem)
-      if (it.newBatchNum) {
-       if (it.currentNum >= it.newBatchNum) {
-        continue
-       } 
-      }
-
-      if (skipHand(it.currentNum, it.startNum)) {
-        continue
-      }
-      if (duplicateHand(it.currentNum, it.beforeNum, it.startNum)) {
+      if (it.loopedLastNum && it.currentNum >= it.loopedLastNum) {
+        continue 
+      } 
+      if (duplicateHand(it.currentNum, it.beforeNum)) {
         d.innerHTML = parseInt(d.innerHTML) + 1
+        continue
+      }
+      if (greaterThan(it.currentNum, it.startNum)) {
+        it.beforeNum = it.currentNum
         continue
       }
       if (isLastHand(it.endNum, it.currentNum)) {
@@ -120,7 +120,8 @@
         u.innerHTML = parseInt(u.innerHTML) + 1
       }
       l.innerHTML = it.currentNum
-      it.newBatchNum = it.currentNum
+      it.loopedLastNum = it.currentNum
+      it.looped = true
     }
   }
 
@@ -141,12 +142,12 @@
 
   // 2 conditions
   //   - startingNum is still smaller than the # from the 1st hand
-  function skipHand(currentNum, startNum) {
-    return (startNum < currentNum)
+  function greaterThan(currentNum, startNum) {
+    return (currentNum > startNum)
   }
 
   //   - currentNum is equal to the # from hand before (takes care of +50 glitch)
-  function duplicateHand(currentNum, beforeNum, startNum) {
+  function duplicateHand(currentNum, beforeNum) {
     return (currentNum === beforeNum)
   }
 

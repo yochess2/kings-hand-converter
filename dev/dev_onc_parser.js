@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const files = fs.readdirSync('./hands/')
 const folder = './hands/'
-const folder_2 = './hands_onc/'
+const folder_2 = './hands_saved/'
 const converter_onc = require('../extension/converter/converter_onc.js')
 
 process(files)
@@ -17,7 +17,6 @@ async function process(files) {
       continue
     }
     let fileStr = ''
-    // let filename = `filename_${fileIndex}`
     let filename = `${file}_converted`
     let HHs = await getHand(file)
     let handIndex = 0
@@ -38,36 +37,11 @@ async function process(files) {
       }
       handIndex++
     }
-
+    console.log(fileStr)
     // UNCOMMENT THIS LINE
-    await saveFile(folder_2, filename, fileStr)
+    // await saveFile(folder_2, filename, fileStr)
     fileIndex++
   }
-
-
-  // files.forEach((file, fileIndex) => {
-  //   if (file === '.DS_Store') {
-  //     return
-  //   }
-  //   let fileStr = ''
-  //   let filename = `filename_${fileIndex}`
-  //   getHand(file).forEach((oldHandText, handIndex) => {
-  //     if (oldHandText === "") {
-  //       return
-  //     }
-  //     // if (handIndex === 1) {
-  //       let oldHand = filterHand(oldHandText)
-  //       if (oldHand.lines.length <= 11) {
-  //         return
-  //       }
-  //       const newHand = converter_onc.convertOnc(oldHand, true)
-  //       if (newHand.display) {
-  //         fileStr += newHand.text + '\n'
-  //       }
-  //     // }
-  //   })
-    // await saveFile(folder_2, filename, fileStr)
-  // })
 }
 
 function populateOldHand(text) {
@@ -132,9 +106,4 @@ async function saveFile(folder_2, filename, fileStr) {
   fs.writeFileSync(`${folder_2}${filename}.txt`, fileStr)
   console.log(`${filename} was a success!`)
   return
-
-  // await fs.writeFile(`${folder_2}${filename}.txt`, fileStr, function (err) {
-  //   if (err) return console.log(err);
-  //   return console.log(`${filename} was a success!`);
-  // })
 }
