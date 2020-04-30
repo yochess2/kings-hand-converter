@@ -2,11 +2,6 @@
 This chrome extension app is written in javascript
 
 **IF SITE IS LAGGY, WAIT FOR IT TO BE LESS LAGGY**
-**IF SITE IS LAGGY, WAIT FOR IT TO BE LESS LAGGY**
-**IF SITE IS LAGGY, WAIT FOR IT TO BE LESS LAGGY**
-**IF SITE IS LAGGY, WAIT FOR IT TO BE LESS LAGGY**
-**IF SITE IS LAGGY, WAIT FOR IT TO BE LESS LAGGY**
-
 
 **Features:**
 - [x] pull all hands from kingsclub
