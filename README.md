@@ -1,6 +1,8 @@
 # Kings Club Poker Hand Converter #
 This chrome extension app is written in javascript
 
+**IF SITE IS LAGGY, WAIT FOR IT TO BE LESS LAGGY**
+
 **Features:**
 - [x] pull all hands from kingsclub
 - [x] Converts the following games into Pokerstars format
@@ -46,3 +48,6 @@ This chrome extension app is written in javascript
 **UPDATE 4/28/2020**
 - [x] Capture all side pots with just 1 all-in (not available yet for ONC)
 - [x] Capture most post situations (eg. CO posts)
+
+**UPDATE 4/28/2020**
+- [x] fix duplicate hand issues
