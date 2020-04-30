@@ -30,6 +30,7 @@
       return await p_k.processArchive(
         app.archiveHandElems,
         app.downloadWin,
+        app.htmlElems,
         parseInt(app.store[startNum]),
         parseInt(app.store[endNum]),
         app.store[autoClick]
@@ -58,13 +59,28 @@
       h.setError(app.error, true, "Something wrong with the hands")
       return app
     }
-    app.downloadWin.document.write(`<div>Total Hands: <span id="handcount">${app.archiveHandElems.length}</span></div>`)
+
+    app.htmlElems = handleHtml(app)
+    return app
+  }
+
+  function handleHtml(app) {
+    app.downloadWin.document.write(`<div>Total Hands: <span id="handcountElem">${app.archiveHandElems.length}</span></div>`)
     app.downloadWin.document.write(`<div>Convertable Hands: <span id="c">0</span></div>`)
     app.downloadWin.document.write(`<div>Unconvertable Hands: <span id="u">0</span></div>`)
     app.downloadWin.document.write(`<div>Duplicate Bug: <span id="d">0</span></div>`)
     app.downloadWin.document.write(`<div>Last Hand: <span id="l"></span></div>`)
     app.downloadWin.document.write(`<div>Lag (will auto-close at 100): <span id="lag"></span></div>`)
     app.downloadWin.document.write(`<div>Click to Stop: <button id="stop">STOP</button></div>`)
-    return app
+
+    return {
+      hc: app.downloadWin.document.getElementById('handcountElem'),
+      c: app.downloadWin.document.getElementById('c'),
+      u: app.downloadWin.document.getElementById('u'),
+      d: app.downloadWin.document.getElementById('d'),
+      l: app.downloadWin.document.getElementById('l'),
+      lag: app.downloadWin.document.getElementById('lag'),
+      stop: app.downloadWin.document.getElementById('stop')
+    }
   }
 })(APP_SETTING, APP_METHODS, HELPER_METHODS)
