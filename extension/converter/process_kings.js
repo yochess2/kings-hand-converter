@@ -90,13 +90,20 @@
       if (it.isStop) { break }
       if (!(validHand(archiveHandElem))) { continue }
       it.currentNum = getCurrentArchiveHandNum(archiveHandElem)
-      if (it.loopedLastNum && it.currentNum >= it.loopedLastNum) {
+
+      // if looped, skip to next batch
+      if (it.lastNum && it.currentNum >= it.lastNum) {
         continue 
       } 
+
+      // if currentnum equals to previous num, skip
       if (duplicateHand(it.currentNum, it.beforeNum)) {
+        console.log(it.currentNum, it.beforeNum)
         d.innerHTML = parseInt(d.innerHTML) + 1
         continue
       }
+
+      // if currentnum is greater than startnum, skip
       if (greaterThan(it.currentNum, it.startNum)) {
         it.beforeNum = it.currentNum
         continue
@@ -104,7 +111,6 @@
       if (isLastHand(it.endNum, it.currentNum)) {
         break
       }
-      it.beforeNum = it.currentNum
       const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem, lag)
       if (unconvertedHand.error) {
         it.error = true
@@ -120,9 +126,10 @@
         u.innerHTML = parseInt(u.innerHTML) + 1
       }
       l.innerHTML = it.currentNum
-      it.loopedLastNum = it.currentNum
+      it.beforeNum = it.currentNum
       it.looped = true
     }
+    it.lastNum = it.currentNum
   }
 
 

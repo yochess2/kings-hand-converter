@@ -30,7 +30,7 @@
         lag.innerHTML = `${counter/100}/${a.timeToDelay/100}`
       }
       if (counter > a.timeToDelay) {
-        console.log('time out!!!!')
+        lag.innerHTML = `TIME OUT`
         handleTimeout(result, archiveHandElem)
         closeModal()
         break
