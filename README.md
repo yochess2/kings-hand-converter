@@ -35,7 +35,8 @@ This chrome extension app is written in javascript
 2. On the upper left corner of the main browser, click on the BK LOGO
 3. Type in the hand numbers to start (most recent hand) and end (last hand)
 4. On the archive window, right click, and click "Convert Hands"
-5. When done, click "download" (download link will appear)
+5. **Make sure you are on the archive window when right clicking**
+6. When done, click "download" (download link will appear)
 
 **UPDATE 4/25/2020**
 - [x] +50 feature is now automated
