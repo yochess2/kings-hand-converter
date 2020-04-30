@@ -94,11 +94,12 @@
       // if looped, skip to next batch
       if (it.lastNum && it.currentNum >= it.lastNum) {
         continue 
-      } 
-
+      } else {
+        console.log('new: ', it.currentNum, ' < ', it.lastNum, ' :    ', it.beforeNum)
+      }
       // if currentnum equals to previous num, skip
       if (duplicateHand(it.currentNum, it.beforeNum)) {
-        console.log(it.currentNum, it.beforeNum)
+        console.log('>>>>>>>', it.currentNum, it.beforeNum)
         d.innerHTML = parseInt(d.innerHTML) + 1
         continue
       }
