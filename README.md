@@ -49,5 +49,5 @@ This chrome extension app is written in javascript
 - [x] Capture all side pots with just 1 all-in (not available yet for ONC)
 - [x] Capture most post situations (eg. CO posts)
 
-**UPDATE 4/28/2020**
+**UPDATE 4/30/2020**
 - [x] fix duplicate hand issues
