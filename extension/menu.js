@@ -6,9 +6,11 @@ chrome.contextMenus.create({
 })
 
 chrome.contextMenus.onClicked.addListener((clickData, tab) => {
+  console.log('1. right click works')
   if (clickData.pageUrl.match("kingsclubpkr.com/archive.html")) {
+    console.log('2. matching works')
     chrome.tabs.sendMessage(tab.id, {text: 'rightClicked'}, (text) => {
-      console.log(text)
+      console.log('3. message sent', text)
     })
   }
 
