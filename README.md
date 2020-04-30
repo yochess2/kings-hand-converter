@@ -17,8 +17,7 @@ This chrome extension app is written in javascript
 
 **TODO:**
 - [ ] Testing
-- [ ] Fix HHs with 2+ all-ins and all-in preflop
-- [ ] Fix various edge cases of postings preflop (eg. CO posts)
+- [ ] Fix various edge cases (<0.5% freq)
 
 **Nice to have features:**
 - [ ] better UI
