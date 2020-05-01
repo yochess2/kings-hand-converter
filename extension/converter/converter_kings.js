@@ -54,7 +54,6 @@ function convert(old_hand) {
     // time: ["hour", "minute", "second"]
     // table: "Learn HORSE"
     // button: "1"
-    console.log(old_hand)
     const details_1 = old_hand.lines[0].match(re.line_1)
     const details_2 = old_hand.lines[1].match(re.line_2)
     const details_3 = old_hand.lines[2].match(re.line_3)
