@@ -53,3 +53,6 @@ This chrome extension app is written in javascript
 **UPDATE 4/30/2020**
 - [x] fix duplicate hand issues
 - [x] grabs majority of ONC side pots (~1% error rate)
+
+**UPDATE 5/1/2020**
+-[x] allow special characters such as İ (last update crashed on several hands)
