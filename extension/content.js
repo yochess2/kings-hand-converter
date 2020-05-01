@@ -24,7 +24,8 @@
     if (isOnc) {
       return await p_o.processOnc(
         app.archiveHandElems, 
-        app.downloadWin
+        app.downloadWin,
+        app.htmlElems
       )
     } else {
       return await p_k.processArchive(

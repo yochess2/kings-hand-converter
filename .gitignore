@@ -104,7 +104,9 @@ dist
 .tern-port
 
 dev/hands/*
+dev/hands_saved
 dev/stars_hands/*
 dev/hands_onc/*
 dev/hands_kings/*
+dev/dev_onc_parser.js
 .DS_STORE

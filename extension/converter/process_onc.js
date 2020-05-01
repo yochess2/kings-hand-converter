@@ -6,16 +6,12 @@
     processOnc: processOnc
   }
 
-  async function processOnc(handsDropDown, downloadWin) {
-    let counter = 0, hasResults = false
+  async function processOnc(handsDropDown, downloadWin, htmlElems) {
     let convertedStr = ''
     let unConvertedStr = ''
+    let originalStr = ''
     let isStop = false
-    const c = downloadWin.document.getElementById('c')
-    const u = downloadWin.document.getElementById('u')
-    const l = downloadWin.document.getElementById('l')
-    const stop = downloadWin.document.getElementById('stop')
-    stop.onclick = () => {
+    htmlElems.stop.onclick = () => {
       isStop = true
     }
 
@@ -26,32 +22,41 @@
       }
       let link = "HH_Parser_CashierPages.asp?Details="+handDropDown.value.replace(' ', "%20")
       let unconvertedHand = await fetchHand(link)
+      originalStr += unconvertedHand.text + '\n'
       convertedHand = convertOnc(unconvertedHand)
       if (convertedHand.display) {
         convertedStr += convertedHand.text + '\n'
-        c.innerHTML = parseInt(c.innerHTML) + 1
+        htmlElems.c.innerHTML = parseInt(htmlElems.c.innerHTML) + 1
       } else {
         unConvertedStr += unconvertedHand.text + '\n'
-        u.innerHTML = parseInt(u.innerHTML) + 1
+        htmlElems.u.innerHTML = parseInt(htmlElems.u.innerHTML) + 1
       }
-      l.innerHTML = handDropDown.value
-      counter++
+      htmlElems.l.innerHTML = handDropDown.value
     }
+
+    createButtons(htmlElems, convertedStr, unConvertedStr, originalStr)
+  }
+
+    function createButtons(htmlElems, convertedStr, unConvertedStr, originalStr) {
     const cBtn = document.createElement("BUTTON")
     const uBtn = document.createElement("BUTTON")
+    const hcBtn = document.createElement("BUTTON")
     cBtn.innerHTML = "Download"
     uBtn.innerHTML = "Download"
-    c.appendChild(cBtn)
-    u.appendChild(uBtn)
+    hcBtn.innerHTML = "Download"
+
+    htmlElems.c.appendChild(cBtn)
+    htmlElems.u.appendChild(uBtn)
+    htmlElems.hc.appendChild(hcBtn)
 
     cBtn.onclick = (stuff) => {
       chrome.runtime.sendMessage({text: 'download', str: convertedStr})
-      console.log(convertedStr)
     }
     uBtn.onclick = (stuff) => {
-      console.log(unConvertedStr)
       chrome.runtime.sendMessage({text: 'download', str: unConvertedStr})
-
+    }
+    hcBtn.onclick = (stuff) => {
+      chrome.runtime.sendMessage({text: 'download', str: originalStr})
     }
   }
 

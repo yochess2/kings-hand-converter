@@ -5,9 +5,9 @@
 //   convertOnc: convertOnc
 // }
 
-function convertOnc(old_hand, show_error) {
+function convertOnc(old_hand, show_error, show_chat) {
   return convertHand(old_hand,show_error)
-  function convertHand(old_hand, show_error) {
+  function convertHand(old_hand, show_error, show_chat) {
     const re = {
       hand_line: /^\*\*\*\*\* Hand History for hand : (\d+) \*\*\*\*\*$/i,
       game_date_line: /^(\w+) (Hold'em|OmahaHiLo) Blinds\((\d*\.?\,?\d*\.?\d+)\/(\d*\.?\,?\d*\.?\d+)\)  - (\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+) (AM|PM)$/i,
@@ -27,7 +27,6 @@ function convertOnc(old_hand, show_error) {
       action_line: /^(.*) (folds|checks|calls|raises|bets)(\s*\[(\d*\.?\,?\d*\.?\d+)\])?\.$/i,
       main_line: /^Main Pot created with (\d*\.?\,?\d*\.?\d+)$/i,
       side_line: /^Side Pot \#(\d) created with (\d*\.?\,?\d*\.?\d+)$/i
-
     }
   	const hand_details = {
       convertable: false,
@@ -38,7 +37,6 @@ function convertOnc(old_hand, show_error) {
       error: false,
   	  text: ''
   	}
-
     old_hand.lines = filterLines(old_hand.lines)
 
     let index = 0
@@ -65,6 +63,7 @@ function convertOnc(old_hand, show_error) {
     if (hand_details.error) {
       if (show_error) {
         console.error('populatePlayers error')
+        new_hand.error = true
       }
       new_hand.error = true
       return new_hand
@@ -74,6 +73,7 @@ function convertOnc(old_hand, show_error) {
     if (hand_details.error) {
       if (show_error) {
         console.error('getBlinds error')
+        new_hand.error = true
       }
       new_hand.error = true
       return new_hand
@@ -82,15 +82,15 @@ function convertOnc(old_hand, show_error) {
     if (hand_details.error) {
       if (show_error) {
         console.error('getHands error, likely straddle: ' + hand_details.hand_number)
+        new_hand.error = true
       }
       new_hand.error = true
       return new_hand
     }
-    turnToStars(hand_details, re, old_hand, new_hand, index)
-    // 262368 - side pot
-    // 262788 - side pot - guy with chips wins both main and side pot
-    // 263210 - side pot - allin wins main pot 
-
+    turnToStars(hand_details, re, old_hand, new_hand, index, show_chat)
+    if (hand_details.error) {
+      console.error('something wrong ' + hand_details.hand_number)
+    }
   	return new_hand
   }
 
@@ -104,7 +104,7 @@ function convertOnc(old_hand, show_error) {
       if (line.match(/^\s/)) {
         continue
       }
-      if (line.match(/left table.$/)) {
+      if (line.match(/left table.$/i)) {
         continue
       }
       result.push(line)
@@ -268,7 +268,7 @@ function convertOnc(old_hand, show_error) {
     return index
   }
 
-  function turnToStars(hd, re, old_hand, new_hand, index) {
+  function turnToStars(hd, re, old_hand, new_hand, index, show_chat) {
     const getButtonLine = (num) => num ? ` Seat #${num} is the button` : ''
     const line_1 = `PokerStars Hand #${hd.hand_number}:  ${hd.stars_game_type} ($${hd.stakes[0]}/$${hd.stakes[1]} USD) - ${hd.date[0]}/${hd.date[1]}/${hd.date[2]} ${hd.time[0]}:${hd.time[1]}:${hd.time[2]} ${hd.time[3]}`
     const line_2 = `Table '${hd.table_name}'${getButtonLine(hd.dealer_num)}`
@@ -289,6 +289,7 @@ function convertOnc(old_hand, show_error) {
         missed_lines.push(`${player}: posts big blind $${parseFloat(blinds.sb)}`)
       } else {
         console.error('uncovered blinds so far!')
+        hand_number.error = true
       }
     }
     new_hand.text += line_1 + '\n' + line_2 + '\n' + players_line + '\n' + sb_line + '\n' + bb_line + '\n' 
@@ -309,36 +310,45 @@ function convertOnc(old_hand, show_error) {
       new_hand.text += hole_line + '\n' + dealt_line + '\n'
     }
     // action
-    index = populateAction(hd, re, old_hand, new_hand, index, 'flop_line')
-    if (new_hand.side) {
+    if (new_hand.error || hd.error) {
       return
     }
+    index = populateAction(hd, re, old_hand, new_hand, index, 'flop_line', show_chat)
     if (new_hand.mucked) {
-      winnerLine(hd, re, old_hand, new_hand, index, {adj: 12})
+      winnerLine(hd, re, old_hand, new_hand, index, true)
       return
     }
-    index = populateAction(hd, re, old_hand, new_hand, index, 'turn_line')
-    if (new_hand.side) {
+    if (new_hand.error || hd.error) {
+      return
+    }
+    index = populateAction(hd, re, old_hand, new_hand, index, 'turn_line', show_chat)
+    if (new_hand.mucked) {
+      winnerLine(hd, re, old_hand, new_hand, index, null)
+      return
+    }
+    if (new_hand.error || hd.error) {
+      return
+    }
+    index = populateAction(hd, re, old_hand, new_hand, index, 'river_line', show_chat)
+    if (new_hand.error || hd.error) {
       return
     }
     if (new_hand.mucked) {
       winnerLine(hd, re, old_hand, new_hand, index, null)
       return
     }
-    index = populateAction(hd, re, old_hand, new_hand, index, 'river_line')
-    if (new_hand.side) {
+    if (new_hand.error || hd.error) {
       return
     }
-    if (new_hand.mucked) {
+    index = populateAction(hd, re, old_hand, new_hand, index, 'show_line', show_chat)
+    if (new_hand.error || hd.error) {
+      return
+    }
+    if (new_hand.mucked || hd.error) {
       winnerLine(hd, re, old_hand, new_hand, index, null)
       return
     }
-    index = populateAction(hd, re, old_hand, new_hand, index, 'show_line')
-    if (new_hand.side) {
-      return
-    }
-    if (new_hand.mucked) {
-      winnerLine(hd, re, old_hand, new_hand, index, null)
+    if (new_hand.error || hd.error) {
       return
     }
     winnerLine(hd, re, old_hand, new_hand, index)
@@ -352,14 +362,42 @@ function convertOnc(old_hand, show_error) {
     }
   }
 
-  function populateAction(hd, re, old_hand, new_hand, index, str) {
+  function populateAction(hd, re, old_hand, new_hand, index, str, show_chat) {
     let header_line = old_hand.lines[index].match(re[str])
     let muck_line = old_hand.lines[index].match(re.muck_line)
     hd.last_bet = 0
+    if (header_line) {
+      if (header_line[1].toLowerCase() === 'flop') {
+        hd.flop = [fixCards(header_line[2]), fixCards(header_line[3]), fixCards(header_line[4])]
+        new_hand.text += `*** FLOP *** [${hd.flop[0]} ${hd.flop[1]} ${hd.flop[2]}]` + '\n'
+      } else if (header_line[1].toLowerCase() === 'turn') {
+        hd.turn = fixCards(header_line[2])
+        new_hand.text += `*** TURN *** [${hd.flop[0]} ${hd.flop[1]} ${hd.flop[2]}] [${hd.turn}]` + '\n'
+      } else if (header_line[1].toLowerCase() === 'river') {
+        hd.river = fixCards(header_line[2])
+        new_hand.text += `*** RIVER *** [${hd.flop[0]} ${hd.flop[1]} ${hd.flop[2]} ${hd.turn}] [${hd.river}]` + '\n'
+      } else if (header_line[2].toLowerCase() === 'shows') {
+        new_hand.text += '*** SHOW DOWN ***' + '\n'
+        if (hd.game_type[1] === 'OmahaHiLo') {
+          new_hand.text += `${header_line[1]}: shows [${fixCards(header_line[3])} ${fixCards(header_line[4])} ${fixCards(header_line[6])} ${fixCards(header_line[8])}]` + '\n'
+        } else {
+          new_hand.text += `${header_line[1]}: shows [${fixCards(header_line[3])} ${fixCards(header_line[4])}]` + '\n'
+        }
+      } else { 
+        console.error('something went wrong with action')
+        hd.error = true
+      }
+      index++
+      return index
+    }
     while (!(header_line || muck_line)){
+      if (!(old_hand.lines[index])) {
+        hd.error = true
+        return index
+      }
       header_line = old_hand.lines[index].match(re[str])
       muck_line = old_hand.lines[index].match(re.muck_line)
-      if (muck_line) {
+      if (muck_line || old_hand.lines[index].match(/(.*) shows cards./i)) {
         new_hand.mucked = true
         index++
         let refund_line = old_hand.lines[index].match(re.refund_line)
@@ -388,15 +426,12 @@ function convertOnc(old_hand, show_error) {
           }
         } else { 
           console.error('something went wrong with action')
+          hd.error = true
         }
         index++
         break
       }
-      toBettingAction(hd, re, old_hand, new_hand, index, str)
-      if (new_hand.side) {
-        console.error('side pot: ' + hd.hand_number)
-        return
-      }
+      toBettingAction(hd, re, old_hand, new_hand, index, str, show_chat)
       index++
     }
     return index
@@ -427,28 +462,72 @@ function convertOnc(old_hand, show_error) {
         new_hand.text += `${action_line[1]}: bets $${action_line[4]}` + '\n'
       } else {
         console.error('unhandled betting action')
+        hd.error = true
       }
     }
     if (!(action_line)) {
       main_line = old_hand.lines[index].match(re.main_line)
-      new_hand.side = true
-      return
+      hd.main = true
     }
     if (!(action_line || main_line)) {
       side_line = old_hand.lines[index].match(re.side_line)
+      if (side_line) {
+        hd.side = true
+        hd.side_glitch = parseFloat(side_line[2])
+      }
     }
     if (!(action_line || main_line || side_line)) {
-      console.error('something went wrong in betting action')
+      if (show_chat) {
+        console.log('>>' + old_hand.lines[index], hd.hand_number)
+      }
     }
   }
 
   function winnerLine(hd, re, old_hand, new_hand, index, bug) {
     let winner_line = old_hand.lines[index].match(re.winner_line)
     if (!(winner_line)) {
-      console.error('no winner')
+      if (!(hd.main)) {
+        console.error('no winner', old_hand.lines[index])
+        hd.error = true
+        return
+      }
+      let main_lines = ""
+      let side_lines = ""
+      let main_pot_match = old_hand.lines[index].match(/(.*) wins (.*) from main pot/i)
+      while (main_pot_match) {
+        main_lines += `${main_pot_match[1]} collected $${main_pot_match[2]} from pot\n`
+        index++
+        if (!(old_hand.lines[index])) {
+          break
+        }
+        main_pot_match = old_hand.lines[index].match(/(.*) wins (.*) from main pot/i)
+      }
+      if (old_hand.lines[index]) {
+        let side_pot_match = old_hand.lines[index].match(/(.*) wins (.*) from side pot/i)
+        let side_total = 0
+        let side_counter = 0
+        if (hd.side && hd.side_pot_match && hd.side_glitch <= parseFloat(hd.stakes) *2) {
+          side_total -= hd.side_glitch
+        }
+        while (side_pot_match) {
+          side_total += parseFloat(side_pot_match[2])
+          index++
+          side_counter -= 1
+          if (!(old_hand.lines[index])) {
+            break
+          }
+          side_pot_match = old_hand.lines[index].match(/(.*) wins (.*) from side pot/i)
+        }
+        for (let i = side_counter; i < 0; i++) {
+          side_pot_match = old_hand.lines[index+side_counter].match(/(.*) wins (.*) from side pot/i)
+          side_lines += `${side_pot_match[1]} collected $${side_total/(-1*side_counter)} from side pot\n`
+        }
+        new_hand.text += side_lines
+      }
+      new_hand.text += main_lines
     }
     while (winner_line) {
-      if (bug && bug.adj) {
+      if (bug) {
         winner_line[2] -= parseFloat(hd.stakes[0])
       }
       if (winner_line[2] === 6 || winner_line[2] === 4) {
