@@ -1,9 +1,9 @@
 //hand comes in lines and text
 
 // for development mode purposes
-// module.exports = {
-//   convertOnc: convertOnc
-// }
+module.exports = {
+  convertOnc: convertOnc
+}
 
 function convertOnc(old_hand, show_error, show_chat) {
   return convertHand(old_hand,show_error)
@@ -63,7 +63,6 @@ function convertOnc(old_hand, show_error, show_chat) {
     if (hand_details.error) {
       if (show_error) {
         console.error('populatePlayers error')
-        new_hand.error = true
       }
       new_hand.error = true
       return new_hand
@@ -73,7 +72,6 @@ function convertOnc(old_hand, show_error, show_chat) {
     if (hand_details.error) {
       if (show_error) {
         console.error('getBlinds error')
-        new_hand.error = true
       }
       new_hand.error = true
       return new_hand
@@ -82,14 +80,17 @@ function convertOnc(old_hand, show_error, show_chat) {
     if (hand_details.error) {
       if (show_error) {
         console.error('getHands error, likely straddle: ' + hand_details.hand_number)
-        new_hand.error = true
       }
       new_hand.error = true
       return new_hand
     }
     turnToStars(hand_details, re, old_hand, new_hand, index, show_chat)
+
     if (hand_details.error) {
-      console.error('something wrong ' + hand_details.hand_number)
+      if (show_error) {
+       console.error('Incomplete hand ' + hand_details.hand_number)
+      }
+      new_hand.error = true
     }
   	return new_hand
   }

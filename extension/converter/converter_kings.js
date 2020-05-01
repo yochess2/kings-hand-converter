@@ -14,22 +14,22 @@ function convert(old_hand) {
       line_2: /^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$/,
       line_3: /^Table '(.*(?='))'( Seat (\d) is the button)?$/,
 
-      seat_line: /^Seat (\d): ((\w+\s*\-*\@*\.*){1,10}) \((\d*\.?\,?\d*\.?\d+)\)( \((\d*\.?\,?\d*\.?\d+) pts\))?$/,
-      blind_line: /^((\w+\s*\-*\@*\.*){1,10}): posts the (small|big) blind (\d*\.?\,?\d*\.?\d+)(\, and is (all in))?$/,
-      hand_line: /^Dealt to ((\w+\s*\-*\@*\.*){1,10}): \[(\w+) (\w+)( (\w+) (\w+))?( (\w+))?\]$/,
-      action_line: /^((\w+\s*\-*\@*\.*){1,10}) (folds|checks|calls|bets|raises to)( (\d*\.?\,?\d*\.?\d+))?(\, and is (all in))?$/,
+      seat_line: /^Seat (\d): ((.*){1,1}) \((\d*\.?\,?\d*\.?\d+)\)( \((\d*\.?\,?\d*\.?\d+) pts\))?$/,
+      blind_line: /^((.*){1,1}): posts the (small|big) blind (\d*\.?\,?\d*\.?\d+)(\, and is (all in))?$/,
+      hand_line: /^Dealt to ((.*){1,1}): \[(\w+) (\w+)( (\w+) (\w+))?( (\w+))?\]$/,
+      action_line: /^((.*){1,1}) (folds|checks|calls|bets|raises to)( (\d*\.?\,?\d*\.?\d+))?(\, and is (all in))?$/,
 
       flop_line: /^\*\*\* FLOP \*\*\* \[(\w+) (\w+) (\w+)\]$/,
       turn_line: /^\*\*\* TURN \*\*\* \[\w+ \w+ \w+\] \[(\w+)\]$/,
       river_line: /^\*\*\* RIVER \*\*\* \[\w+ \w+ \w+ \w+\] \[(\w+)\]$/,
-      show_line: /^((\w+\s*\-*\@*\.*){1,10}) shows (\[\w+ \w+( \w+ \w+)?( \w+)?\])$/,
+      show_line: /^((.*){1,1}) shows (\[\w+ \w+( \w+ \w+)?( \w+)?\])$/,
 
-      draw_action_line_1: /^((\w+\s*\-*\@*\.*){1,10}) (stands pat|draws)( (\d))?$/,
-      draw_action_line_2: /^((\w+\s*\-*\@*\.*){1,10}) discards (\[(\w+)\s*(\w*)\s*(\w*)\s*(\w*)\s*(\w*)\s*\]) draws \[(\w+)\s*(\w*)\s*(\w*)\s*(\w*)\s*(\w*)\s*\]$/,
+      draw_action_line_1: /^((.*){1,1}) (stands pat|draws)( (\d))?$/,
+      draw_action_line_2: /^((.*){1,1}) discards (\[(\w+)\s*(\w*)\s*(\w*)\s*(\w*)\s*(\w*)\s*\]) draws \[(\w+)\s*(\w*)\s*(\w*)\s*(\w*)\s*(\w*)\s*\]$/,
       draw_line: /^\*\*\* (\w+ DRAW) \*\*\*$/,
 
-      winner_line_1: /^((\w+\s*\-*\@*\.*){1,10}) wins pot \((\d*\.?\,?\d*\.?\d+)\)$/,
-      winner_line_2: /^((\w+\s*\-*\@*\.*){1,10}) wins \((\d*\.?\,?\d*\.?\d+)\) from pot$/,
+      winner_line_1: /^((.*){1,1}) wins pot \((\d*\.?\,?\d*\.?\d+)\)$/,
+      winner_line_2: /^((.*){1,1}) wins \((\d*\.?\,?\d*\.?\d+)\) from pot$/,
       rake_line: /^Rake (\d*\.?\,?\d*\.?\d+)$/
     }
     const hand_details = {}
@@ -54,6 +54,7 @@ function convert(old_hand) {
     // time: ["hour", "minute", "second"]
     // table: "Learn HORSE"
     // button: "1"
+    console.log(old_hand)
     const details_1 = old_hand.lines[0].match(re.line_1)
     const details_2 = old_hand.lines[1].match(re.line_2)
     const details_3 = old_hand.lines[2].match(re.line_3)
