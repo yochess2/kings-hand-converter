@@ -3,7 +3,7 @@ This chrome extension app is written in javascript
 
 **IF SITE IS LAGGY, TRY AGAIN ANOTHER HOUR**.  
 **IF ARCHIVE WON'T LOAD, TRY AGAIN ANOTHER DAY**.  
-**IF THERE IS BUG/ISSUE, FIND ME.  
+**IF THERE IS BUG/ISSUE, FIND ME.**  
 
 **Features:**
 - [x] pull all hands from kingsclub
