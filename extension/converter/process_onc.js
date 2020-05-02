@@ -1,5 +1,6 @@
 ((APP_SETTING, APP_METHODS, HELPER_METHODS) => {
   const h = HELPER_METHODS()
+  const a = APP_SETTING('archive')
   let delay = ms => new Promise(res => setTimeout(res, ms))
 
   APP_METHODS.processOnc = {
@@ -22,6 +23,23 @@
       }
       let link = "HH_Parser_CashierPages.asp?Details="+handDropDown.value.replace(' ', "%20")
       let unconvertedHand = await fetchHand(link)
+      let counter = 0
+      while(!(unconvertedHand) && !(isStop)) {
+        await delay(1000)
+        htmlElems.stop.onclick = () => {
+          isStop = true
+        }
+        unconvertedHand = await fetchHand(link)
+        htmlElems.lag.innerHTML = `${parseInt(counter)}/${a.timeToDelay/100}`
+        if (counter > a.timeToDelay/100) {
+          htmlElems.lag.innerHTML = `DISCONNECTED!`
+          break
+        }
+        counter++
+      }
+      if (!(unconvertedHand)) {
+        break
+      }
       originalStr += unconvertedHand.text + '\n'
       convertedHand = convertOnc(unconvertedHand)
       if (convertedHand.display) {
@@ -69,6 +87,8 @@
       return response.text()
     }).then((data) => {
       return getUnconvertedHand(data)
+    }).catch((error) => {
+      return console.log('>>>>', error)
     })
   }
 
