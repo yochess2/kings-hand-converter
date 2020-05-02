@@ -273,7 +273,9 @@ function convert(old_hand) {
   function populateShowdown(i, old_hand, re, newHand) {
     let showdown_declared = false
     let show_line
-    if (!(old_hand.lines[i].match(/(.*) shows \[(.*)\]/))) {
+    // this did not capture MW showdowns
+    // if (!(old_hand.lines[i].match(/(.*) shows \[(.*)\]/))) {
+    if (old_hand.lines[i].match(re.winner_1) || old_hand.lines[i].match(re.winner_2)) {
       // A) no showdown
       i -= 2
     }
@@ -286,10 +288,11 @@ function convert(old_hand) {
         }
         newHand.text += `${show_line[1]}: shows ${show_line[3]}\n`
       } else {
-        if (showdown_declared) {
-        } else {
+        if (!(showdown_declared)) {
           // A) no showdown
           i += 2
+        } else {
+          // probably leave blank
         }
         break
       }
@@ -356,6 +359,8 @@ function convert(old_hand) {
       action_line = old_hand.lines[i].match(re.action_line)
       show_line = old_hand.lines[i].match(re.show_line)
       if (show_line) {
+        // basically an all-in occured
+        // will have to fix if more than 3 hands shown
         j+= 2
       }
       if (action_line) {
