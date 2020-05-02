@@ -55,4 +55,7 @@ This chrome extension app is written in javascript
 - [x] grabs majority of ONC side pots (~1% error rate)
 
 **UPDATE 5/1/2020**
--[x] allow special characters such as İ (last update crashed on several hands)
+- [x] allow special characters such as İ (last update crashed on several hands)
+
+**UPDATE 5/2/2020**
+- [X] fix MW showdown bug (all hands are captured)
