@@ -138,30 +138,7 @@ function convert(old_hand) {
     // for winner and summary
     i = populateWinnerAndSummary(i, old_hand, re, newHand)
 
-    // captures post
-    let post = []
-    for (let player in hd.check_preflop) {
-      post.push(hd.check_preflop[player])
-    }
-    for (i; i < old_hand.lines.length; i++) {
-      let m_fold = old_hand.lines[i].match(/Seat (\d): (.*) \(.*\) (.*)/)
-      if (m_fold) {
-        if (parseFloat(m_fold[3]) * -1 == parseFloat(hd.bb[2])) {
-          for (let player in hd.fold_preflop) {
-            if (m_fold[2] === player && player !== hd.bb[0]) {
-              post.push(hd.fold_preflop[player])
-            }
-          }
-        }
-      }
-    }
-    post.forEach((player) => {
-      let startStr = newHand.text.slice(0, hd.post_index)
-      let endStr = newHand.text.slice(hd.post_index)
-      let insert = player[1] + ': posts big blind $' + hd.bb[2] + '\n'
-      hd.post_index = (startStr + insert).length
-      newHand.text = startStr + insert + endStr
-    })
+    capturePostError(i, hd, old_hand, newHand)
   }
 
   function toTdAndPopulate(hd, re, old_hand, newHand) {
@@ -189,6 +166,8 @@ function convert(old_hand) {
     i = populateShowdown(i, old_hand, re, newHand)
     // for winner and summary
     i = populateWinnerAndSummary(i, old_hand, re, newHand)
+
+    capturePostError(i, hd, old_hand, newHand)
   }
 
   function populateSeats(hd, re, old_hand, newHand, i) {
@@ -336,6 +315,32 @@ function convert(old_hand) {
       newHand.text += `Total pot $${pot_total} | Rake $${rake}\n`
     }
     return i+1
+  }
+
+  function capturePostError(i, hd, old_hand, newHand) {
+    let post = []
+    for (let player in hd.check_preflop) {
+      post.push(hd.check_preflop[player])
+    }
+    for (i; i < old_hand.lines.length; i++) {
+      let m_fold = old_hand.lines[i].match(/Seat (\d): (.*) \(.*\) (.*)/)
+      if (m_fold) {
+        if (parseFloat(m_fold[3]) * -1 == parseFloat(hd.bb[2])) {
+          for (let player in hd.fold_preflop) {
+            if (m_fold[2] === player && player !== hd.bb[0]) {
+              post.push(hd.fold_preflop[player])
+            }
+          }
+        }
+      }
+    }
+    post.forEach((player) => {
+      let startStr = newHand.text.slice(0, hd.post_index)
+      let endStr = newHand.text.slice(hd.post_index)
+      let insert = player[1] + ': posts big blind $' + hd.bb[2] + '\n'
+      hd.post_index = (startStr + insert).length
+      newHand.text = startStr + insert + endStr
+    })
   }
 
   function toBettingAction(i, re, old_hand, hd, hasBlinds) {
