@@ -1,16 +1,16 @@
 //hand comes in lines and text
 
 // for development mode purposes
-// module.exports = {
-//   convertOnc: convertOnc
-// }
+module.exports = {
+  convertOnc: convertOnc
+}
 
 function convertOnc(old_hand, show_error, show_chat) {
   return convertHand(old_hand,show_error)
   function convertHand(old_hand, show_error, show_chat) {
     const re = {
       hand_line: /^\*\*\*\*\* Hand History for hand : (\d+) \*\*\*\*\*$/i,
-      game_date_line: /^(\w+) (Hold'em|OmahaHiLo) Blinds\((\d*\.?\,?\d*\.?\d+)\/(\d*\.?\,?\d*\.?\d+)\)  - (\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+) (AM|PM)$/i,
+      game_date_line: /^(\w+) (Hold'em|OmahaHiLo) Blinds\((\d*\.?\,?\d*\.?\d+)\/(\d*\.?\,?\d*\.?\d+)\) - (\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+) (AM|PM)$/i,
       table_line: /^Table (\d+)$/i,
       dealer_line: /^Seat (\d) is dealer$/i,
       players_line: /^Total no of players : (\d)$/i,
