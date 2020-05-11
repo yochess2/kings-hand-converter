@@ -62,3 +62,6 @@ This chrome extension app is written in javascript
 
 **UPDATE 5/10/2020**
 - [x] fix negative timestamp
+
+**UPDATE 5/11/2020**
+- [x] follow up with ONC HH update
