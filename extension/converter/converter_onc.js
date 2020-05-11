@@ -1,9 +1,9 @@
 //hand comes in lines and text
 
 // for development mode purposes
-module.exports = {
-  convertOnc: convertOnc
-}
+// module.exports = {
+//   convertOnc: convertOnc
+// }
 
 function convertOnc(old_hand, show_error, show_chat) {
   return convertHand(old_hand,show_error)
