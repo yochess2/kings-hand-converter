@@ -2,8 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const files = fs.readdirSync('./hands/')
 const folder = './hands/'
-const converter = require('../extension/converter/converter_kings.js')
-// const converter_onc = require('../extension/converter/converter_onc.js')
+// const converter = require('../extension/converter/converter_kings.js')
+const converter_onc = require('../extension/converter/converter_onc.js')
 
 
 files.forEach((file, fileIndex) => {
@@ -16,8 +16,8 @@ files.forEach((file, fileIndex) => {
     }
     // if (handIndex === 0) {
       const oldHand = populateOldHand(oldHandText)
-      const newHand = converter.convert(oldHand, true)
-      // const newHand = converter_onc.convertOnc(oldHand, true)
+      // const newHand = converter.convert(oldHand, true)
+      const newHand = converter_onc.convertOnc(oldHand, true)
       if (newHand.display) {
         console.log(newHand.text)
       }

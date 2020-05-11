@@ -37,7 +37,7 @@ function convertOnc(old_hand, show_error, show_chat) {
       error: false,
   	  text: ''
   	}
-    old_hand.lines = filterLines(old_hand.lines)
+    old_hand.lines = filterLines(old_hand.lines, re)
 
     let index = 0
     if (old_hand.lines.length < 5) {
@@ -95,10 +95,19 @@ function convertOnc(old_hand, show_error, show_chat) {
   	return new_hand
   }
 
-  function filterLines(lines) {
+  function filterLines(lines, re) {
+    const temp_fix = []
+    let i = 0
+    while (i < lines.length && !(lines[i].match(re.hand_line))) {
+      temp_fix.push(lines[i])
+      i++
+    }
     const result = []
-    for (let index = 0; index < lines.length; index++) {
+    for (let index = i; index < lines.length; index++) {
       let line = lines[index]
+      if (line === '') {
+        continue
+      }
       if (line.match(/\>/)) {
         continue
       }
@@ -110,7 +119,9 @@ function convertOnc(old_hand, show_error, show_chat) {
       }
       result.push(line)
     }
-
+    for (let fix in temp_fix) {
+      result.push(temp_fix[fix])
+    }
     return result
   }
 
