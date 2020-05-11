@@ -59,3 +59,6 @@ This chrome extension app is written in javascript
 
 **UPDATE 5/2/2020**
 - [X] fix MW showdown bug (all hands are captured)
+
+**UPDATE 5/10/2020**
+- [x] fix negative timestamp
