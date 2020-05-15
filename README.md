@@ -65,3 +65,6 @@ This chrome extension app is written in javascript
 
 **UPDATE 5/11/2020**
 - [x] follow up with ONC HH update
+
+**UPDATE 5/11/2020**
+- [x] Kingshomegame supported
