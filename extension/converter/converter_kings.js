@@ -1,9 +1,9 @@
 //hand comes in lines and text
 
 // for development mode purposes
-// module.exports = {
-//   convert: convert
-// }
+module.exports = {
+  convert: convert
+}
 
 
 function convert(old_hand) {
@@ -61,7 +61,7 @@ function convert(old_hand) {
     hand_details.type = details_1[2]
     hand_details.stake = [details_1[3], details_1[4]]
     hand_details.date = [details_2[1], details_2[2], details_2[3]]
-    hand_details.time = [(parseInt(details_2[4])+19) % 24+'', details_2[5], details_2[6]]
+    hand_details.time = [details_2[4], details_2[5], details_2[6]]
     hand_details.table = details_3[1]
     hand_details.button_num = details_3[3]
   }
