@@ -68,3 +68,6 @@ This chrome extension app is written in javascript
 
 **UPDATE 5/15/2020**
 - [x] Kingshomegame supported
+
+**UPDATE 6/16/2020**
+- [x] fixed kings fix post error (starting 6/2 i believe)
