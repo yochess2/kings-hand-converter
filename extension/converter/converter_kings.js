@@ -194,8 +194,11 @@ function convert(old_hand) {
 
   function populateBlinds(hd, re, old_hand, newHand, i, heading) {
     let blind_line
+    let post_line
+    let j = 0
     for (i; i < old_hand.lines.length; i++) {
       blind_line = old_hand.lines[i].match(re.blind_line)
+      post_line = old_hand.lines[i].match(/^((.*){1,1}): posts blind (\d*\.?\,?\d*\.?\d+)(\, and is (all in))?$/)
       if (blind_line) {
         blind_line[3] === "small" ? hd.sb = [blind_line[1], blind_line[3], blind_line[4]] : hd.bb = [blind_line[1], blind_line[3], blind_line[4]]
         newHand.text += `${blind_line[1]}: posts ${blind_line[3]} blind $${blind_line[4]}`
@@ -203,13 +206,15 @@ function convert(old_hand) {
           newHand.text += ' and is all-in'
         }
         newHand.text += '\n'
+      } else if (post_line) {
+        j += 1
       } else {
         break
       }
     }
     hd.post_index = newHand.text.length
     newHand.text += heading
-    return i
+    return i + j
   }
 
   function populateHands(hd, re, old_hand, newHand, i) {
