@@ -379,6 +379,13 @@ function convert(old_hand) {
         // basically an all-in occured
         // will have to fix if more than 3 hands shown
         j+= 2
+        if (hd['all-in'] && hd.type ===  'Triple Draw 2-7 Lowball Limit') {
+          if (!(old_hand.lines[i-1].match(', and is all in'))) {
+            if (!(old_hand.lines[i-2].match(', and is all in'))) {
+              j+=2
+            }
+          }
+        }
       }
       if (action_line) {
         // to capture posting
@@ -414,23 +421,28 @@ function convert(old_hand) {
           playersAction[action_line[1]] = parseFloat(action_line[5])
           last_bet = parseFloat(action_line[5])
         } else {
-          result += ` ${action_line[3]}`
           if (action_line[4] && action_line[3] === 'bets') {
-            result += ` $${action_line[5]}`
-            playersAction[action_line[1]] = parseFloat(action_line[5])
-            last_bet = parseFloat(action_line[5])
-          }
-          if (action_line[4] && action_line[3] === 'calls') {
-            if (playersAction[action_line[1]]) {
-              result += ` $${parseFloat(action_line[5]) - playersAction[action_line[1]]}`
+            if (hasBlinds && hd.bb[0] === action_line[1]) {
+              result += ` raises $${last_bet} to $${action_line[5]}`
             } else {
-              result += ` $${action_line[5]}`
+              result += ` ${action_line[3]} $${action_line[5]}`
             }
             playersAction[action_line[1]] = parseFloat(action_line[5])
+            last_bet = parseFloat(action_line[5])
+          } else if (action_line[4] && action_line[3] === 'calls') {
+            if (playersAction[action_line[1]]) {
+              result += ` ${action_line[3]} $${parseFloat(action_line[5]) - playersAction[action_line[1]]}`
+            } else {
+              result += ` ${action_line[3]} $${action_line[5]}`
+            }
+            playersAction[action_line[1]] = parseFloat(action_line[5])
+          } else {
+            result += ` ${action_line[3]}`
           }
         }
         if (action_line[6]) {
           result += ' and is all-in'
+          hd['all-in'] = true
         }
         result += '\n'
       } else {
