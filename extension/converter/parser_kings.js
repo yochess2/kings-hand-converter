@@ -37,15 +37,14 @@
       counter++
     }
     lag.innerHTML = '0/100'
+    // for run #2
+    if (!(result.text) && !(result.error)) {
+      handleResult(result)
+    }
     return result
   }
 
   function textAreaDone(archiveHandElem) {
-    // if (!($('body') && $('body')[0] && $('body')[0].lastElementChild)) {
-    //   console.error('Something went wrong with the fullscreen mask looping')
-    //   return false
-    // }
-    // return $('body')[0].lastElementChild.className === 'fullscreen_mask'
     if (!($('textarea')) && !($('textarea')[0]) && !($('textarea')[0].value)) {
       console.error('Something went wrong with the textarea looping')
       return false
