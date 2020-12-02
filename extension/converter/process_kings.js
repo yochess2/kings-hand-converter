@@ -44,7 +44,8 @@
       if (isLastHand(it.endNum, it.currentNum)) {
         break
       }
-      const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem, htmlElems.lag)
+      // const unconvertedHand = await p.fetchUnconvertedHand(archiveHandElem, htmlElems.lag)
+      const unconvertedHand = await p.fetchUnconvertedHand_2(archiveHandElem, htmlElems.lag)
       if (unconvertedHand.error) {
         it.error = true
         break

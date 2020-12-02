@@ -8,8 +8,67 @@
     isFullscreenMask: isFullscreenMask,
     handleFullscreenMask: handleFullscreenMask,
     handleTimeout: handleTimeout,
-    closeModal: closeModal
+    closeModal: closeModal,
+    fetchUnconvertedHand_2: fetchUnconvertedHand_2
   }
+
+  async function fetchUnconvertedHand_2(archiveHandElem, lag) {
+    const result = {
+      text: '',
+      lines: [],
+      error: null
+    }
+    archiveHandElem.dispatchEvent(a.clickEvent)
+    let counter = 0
+    while (!(textAreaDone(archiveHandElem))) {
+      await h.delay(1)
+      if (textAreaDone(archiveHandElem)) {
+        handleResult(result)
+        break
+      }
+      if ((counter % 100 === 0) && (counter !== 0)) {
+        lag.innerHTML = `${counter/100}/${a.timeToDelay/100}`
+      }
+      if (counter > a.timeToDelay) {
+        lag.innerHTML = `TIME OUT`
+        handleTimeout(result, archiveHandElem)
+        break
+      }
+      counter++
+    }
+    lag.innerHTML = '0/100'
+    return result
+  }
+
+  function textAreaDone(archiveHandElem) {
+    // if (!($('body') && $('body')[0] && $('body')[0].lastElementChild)) {
+    //   console.error('Something went wrong with the fullscreen mask looping')
+    //   return false
+    // }
+    // return $('body')[0].lastElementChild.className === 'fullscreen_mask'
+    if (!($('textarea')) && !($('textarea')[0]) && !($('textarea')[0].value)) {
+      console.error('Something went wrong with the textarea looping')
+      return false
+    }
+    if (parseInt($('textarea')[0].value.slice(1,9)) !== parseInt(archiveHandElem.children[1].innerText)) {
+      return false
+    } 
+    return true
+  }
+
+  function handleResult(result) {
+    const text = $('textarea')[0].value.split('\n')
+    for (const line of text) {
+      result.lines.push(line)
+      result.text += line+'\n'
+    }
+    result.error = false
+  }
+
+
+
+
+
 
   async function fetchUnconvertedHand(archiveHandElem, lag) {
     const result = {

@@ -145,7 +145,7 @@ function convert(old_hand) {
     // for winner and summary
     i = populateWinnerAndSummary(i, old_hand, re, newHand)
 
-    capturePostError(i, hd, old_hand, newHand)
+    // capturePostError(i, hd, old_hand, newHand)
   }
 
   function toTdAndPopulate(hd, re, old_hand, newHand) {
@@ -174,7 +174,7 @@ function convert(old_hand) {
     // for winner and summary
     i = populateWinnerAndSummary(i, old_hand, re, newHand)
 
-    capturePostError(i, hd, old_hand, newHand)
+    // capturePostError(i, hd, old_hand, newHand)
   }
 
   function populateSeats(hd, re, old_hand, newHand, i) {
@@ -184,7 +184,7 @@ function convert(old_hand) {
       seat_line = old_hand.lines[i].match(re.seat_line)
       if (seat_line) {
         hd.players.push([seat_line[1], seat_line[2], seat_line[3]])
-        newHand.text += `Seat ${seat_line[1]}: ${seat_line[2]} ($${seat_line[4]} in chips)\n`
+        newHand.text += `Seat ${seat_line[1]}: ${seat_line[2]} ($${seat_line[4].replace(',', '')} in chips)\n`
       } else {
         break
       }
@@ -194,6 +194,7 @@ function convert(old_hand) {
 
   function populateBlinds(hd, re, old_hand, newHand, i, heading) {
     let blind_line
+    let new_blind_line
     let post_line
     let j = 0
     for (i; i < old_hand.lines.length; i++) {
@@ -207,7 +208,8 @@ function convert(old_hand) {
         }
         newHand.text += '\n'
       } else if (post_line) {
-        j += 1
+        newHand.text += `${post_line[1]}: posts blind ${post_line[3]}\n`
+        // j += 1
       } else {
         break
       }
@@ -280,10 +282,10 @@ function convert(old_hand) {
         newHand.text += `${show_line[1]}: shows ${show_line[3]}\n`
       } else {
         if (!(showdown_declared)) {
-          // A) no showdown
+        //   // A) no showdown
           i += 2
         } else {
-          // probably leave blank
+        //   // probably leave blank
         }
         break
       }
@@ -296,13 +298,21 @@ function convert(old_hand) {
     let rake = 0
     let rake_line = old_hand.lines[(old_hand.lines.length -1)].match(re.rake_line) || 
       old_hand.lines[(old_hand.lines.length -2)].match(re.rake_line) ||
-      old_hand.lines[(old_hand.lines.length -3)].match(re.rake_line)
+      old_hand.lines[(old_hand.lines.length -3)].match(re.rake_line) ||
+      old_hand.lines[(old_hand.lines.length -4)].match(re.rake_line) ||
+      old_hand.lines[(old_hand.lines.length -5)].match(re.rake_line) 
+
     if (rake_line) {
       rake = parseFloat(rake_line[1])
       pot_total += rake
     }
 
-    let side_line = old_hand.lines[i].match(/(.*) wins side pot 1 \((.*)\)/)
+    // let side_line = old_hand.lines[i].match(/(.*) wins side pot 1 \((.*)\)/)
+    let side_line = old_hand.lines[(old_hand.lines.length -1)].match(/(.*) wins side pot 1 \((.*)\)/) || 
+      old_hand.lines[(old_hand.lines.length -2)].match(/(.*) wins side pot 1 \((.*)\)/) ||
+      old_hand.lines[(old_hand.lines.length -3)].match(/(.*) wins side pot 1 \((.*)\)/) ||
+      old_hand.lines[(old_hand.lines.length -4)].match(/(.*) wins side pot 1 \((.*)\)/) ||
+      old_hand.lines[(old_hand.lines.length -5)].match(/(.*) wins side pot 1 \((.*)\)/)
     if (side_line) {
       newHand.text += `${side_line[1]} collected $${side_line[2]} from side pot\n`
       i+=1
@@ -316,8 +326,6 @@ function convert(old_hand) {
       if (winner_line) {
         newHand.text += `${winner_line[1]} collected $${winner_line[3]} from pot\n`
         pot_total += parseFloat(winner_line[3].replace(',', ''))
-      } else {
-        break
       }
     }
     newHand.text += "*** SUMMARY ***\n"
