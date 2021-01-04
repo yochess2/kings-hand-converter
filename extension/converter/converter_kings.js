@@ -127,6 +127,7 @@ function convert(old_hand) {
     //   ["player name", "blind type", "amount"]
     // ]
     let i = populateSeats(hd, re, old_hand, newHand, 3)
+    i = populateAnte(hd, re, old_hand, newHand, i)
     i = populateBlinds(hd, re, old_hand, newHand, i, '*** HOLE CARDS ***\n')
     i = populateHands(hd, re, old_hand, newHand, i+1)
     // preflop
@@ -145,7 +146,7 @@ function convert(old_hand) {
     // for winner and summary
     i = populateWinnerAndSummary(i, old_hand, re, newHand)
 
-    // capturePostError(i, hd, old_hand, newHand)
+    capturePostError(i, hd, old_hand, newHand)
   }
 
   function toTdAndPopulate(hd, re, old_hand, newHand) {
@@ -192,6 +193,21 @@ function convert(old_hand) {
     return i
   }
 
+  function populateAnte(hd, re, old_hand, newHand, i, heading) {
+    let re_ante = /^((.*){1,1}): posts ante (\d*\.?\,?\d*\.?\d+)$/
+    let ante_line
+
+    for (i; i < old_hand.lines.length; i++) {
+      ante_line = old_hand.lines[i].match(re_ante)
+      if (ante_line) {
+        newHand.text += `${ante_line[1]}: posts the ante $${ante_line[3]}\n`
+      } else {
+        break
+      }
+    }
+    return i
+  }
+
   function populateBlinds(hd, re, old_hand, newHand, i, heading) {
     let blind_line
     let new_blind_line
@@ -208,7 +224,7 @@ function convert(old_hand) {
         }
         newHand.text += '\n'
       } else if (post_line) {
-        newHand.text += `${post_line[1]}: posts blind ${post_line[3]}\n`
+        newHand.text += `${post_line[1]}: posts blind $${post_line[3]}\n`
         // j += 1
       } else {
         break
