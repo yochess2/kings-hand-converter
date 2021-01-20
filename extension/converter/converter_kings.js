@@ -1,9 +1,9 @@
 //hand comes in lines and text
 
 // for development mode purposes
-// module.exports = {
-//   convert: convert
-// }
+module.exports = {
+  convert: convert
+}
 
 
 function convert(old_hand) {
@@ -212,10 +212,10 @@ function convert(old_hand) {
     let blind_line
     let new_blind_line
     let post_line
-    let j = 0
     for (i; i < old_hand.lines.length; i++) {
       blind_line = old_hand.lines[i].match(re.blind_line)
       post_line = old_hand.lines[i].match(/^((.*){1,1}): posts blind (\d*\.?\,?\d*\.?\d+)(\, and is (all in))?$/)
+      straddle_line = old_hand.lines[i].match(/^((.*){1,1}): straddles (\d*\.?\,?\d*\.?\d+)$/)
       if (blind_line) {
         blind_line[3] === "small" ? hd.sb = [blind_line[1], blind_line[3], blind_line[4]] : hd.bb = [blind_line[1], blind_line[3], blind_line[4]]
         newHand.text += `${blind_line[1]}: posts ${blind_line[3]} blind $${blind_line[4]}`
@@ -225,14 +225,15 @@ function convert(old_hand) {
         newHand.text += '\n'
       } else if (post_line) {
         newHand.text += `${post_line[1]}: posts blind $${post_line[3]}\n`
-        // j += 1
+      } else if (straddle_line) {
+        hd.straddle = [straddle_line[1], straddle_line[3]]
       } else {
         break
       }
     }
     hd.post_index = newHand.text.length
     newHand.text += heading
-    return i + j
+    return i
   }
 
   function populateHands(hd, re, old_hand, newHand, i) {
@@ -394,6 +395,13 @@ function convert(old_hand) {
       if (hd.bb) {
         playersAction[hd.bb[0]] = parseFloat(hd.bb[2])
         last_bet = parseFloat(hd.bb[2])
+      }
+      if (hd.straddle) {
+
+        result += `${hd.straddle[0]}: raises $${last_bet} to $${hd.straddle[1]}`
+        result += '\n'
+        last_bet = parseFloat(hd.straddle[1])
+        hd.straddle = null
       }
     }
     for (i; i < old_hand.lines.length; i++) {
