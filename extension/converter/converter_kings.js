@@ -397,9 +397,9 @@ function convert(old_hand) {
         last_bet = parseFloat(hd.bb[2])
       }
       if (hd.straddle) {
-
         result += `${hd.straddle[0]}: raises $${last_bet} to $${hd.straddle[1]}`
         result += '\n'
+        playersAction[hd.straddle[0]] = parseFloat(hd.straddle[1])
         last_bet = parseFloat(hd.straddle[1])
         hd.straddle = null
       }
